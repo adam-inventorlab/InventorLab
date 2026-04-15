@@ -53,7 +53,7 @@
       <button class="tool-btn" id="tool-box" onclick="setTool('box')">+ Box</button>
       <button class="tool-btn" id="tool-arrow" onclick="setTool('arrow')">+ Arrow</button>
     </div>
-    <button class="tool-btn" id="tool-annotation" onclick="setTool('annotation')">+ Annotation</button>
+    <button class="tool-btn" id="tool-annotation" onclick="setTool('annotation')">+ Text</button>
     <button class="tool-btn" id="tool-line" onclick="setTool('line')">+ Line / Axis</button>
   </div>
 
@@ -121,6 +121,64 @@ var state = {
   resizing: null,  // { id, edge, startX, startY, orig: {x,y,w,h} }
   nextId: 1,
 };
+
+// ── Undo/Redo ──
+var undoStack = [];
+var redoStack = [];
+var MAX_UNDO = 50;
+
+function saveUndoState() {
+  undoStack.push(JSON.stringify({
+    elements: state.elements,
+    arrows: state.arrows,
+    annotations: state.annotations,
+    lines: state.lines,
+    nextId: state.nextId,
+  }));
+  if (undoStack.length > MAX_UNDO) undoStack.shift();
+  redoStack = []; // clear redo on new action
+}
+
+function undo() {
+  if (undoStack.length === 0) return;
+  // Save current state to redo stack
+  redoStack.push(JSON.stringify({
+    elements: state.elements,
+    arrows: state.arrows,
+    annotations: state.annotations,
+    lines: state.lines,
+    nextId: state.nextId,
+  }));
+  var prev = JSON.parse(undoStack.pop());
+  state.elements = prev.elements;
+  state.arrows = prev.arrows;
+  state.annotations = prev.annotations;
+  state.lines = prev.lines;
+  state.nextId = prev.nextId;
+  state.selected = null;
+  render();
+  renderProps(null);
+}
+
+function redo() {
+  if (redoStack.length === 0) return;
+  undoStack.push(JSON.stringify({
+    elements: state.elements,
+    arrows: state.arrows,
+    annotations: state.annotations,
+    lines: state.lines,
+    nextId: state.nextId,
+  }));
+  var next = JSON.parse(redoStack.pop());
+  state.elements = next.elements;
+  state.arrows = next.arrows;
+  state.annotations = next.annotations;
+  state.lines = next.lines;
+  state.nextId = next.nextId;
+  state.selected = null;
+  render();
+  renderProps(null);
+}
 
 // ── View state (zoom + pan) ──
 var view = { x: 0, y: 0, zoom: 1 };
@@ -239,6 +297,57 @@ canvasWrap.addEventListener('mousemove', function(e) {
     return;
   }
 
+  // Active arrow endpoint drag — show preview
+  if (state.endpointDrag) {
+    // Just update cursor; actual reconnection happens on mouseup
+    canvasWrap.style.cursor = 'crosshair';
+    // Store current position for preview rendering
+    state.endpointDrag.currentPos = [p.x, p.y];
+    render();
+    return;
+  }
+
+  // Active segment drag — move both endpoints of a segment along perpendicular axis
+  if (state.segmentDrag) {
+    var seg = state.segmentDrag;
+    var dx = snap(p.x) - snap(seg.startPos.x);
+    var dy = snap(p.y) - snap(seg.startPos.y);
+
+    if (seg.arrowId) {
+      var arr = findById(seg.arrowId);
+      if (arr && arr.waypoints) {
+        // segIndex is 1-based in the full point array; waypoint array is 0-based (offset by 1 since pts[0] is the anchor)
+        var wpIdx1 = seg.segIndex - 1;
+        var wpIdx2 = seg.segIndex;
+        if (seg.isHorizontal) {
+          // Horizontal segment → drag vertically
+          if (wpIdx1 >= 0 && wpIdx1 < arr.waypoints.length) arr.waypoints[wpIdx1][1] = snap(arr.waypoints[wpIdx1][1] + dy);
+          if (wpIdx2 >= 0 && wpIdx2 < arr.waypoints.length) arr.waypoints[wpIdx2][1] = snap(arr.waypoints[wpIdx2][1] + dy);
+        } else {
+          // Vertical segment → drag horizontally
+          if (wpIdx1 >= 0 && wpIdx1 < arr.waypoints.length) arr.waypoints[wpIdx1][0] = snap(arr.waypoints[wpIdx1][0] + dx);
+          if (wpIdx2 >= 0 && wpIdx2 < arr.waypoints.length) arr.waypoints[wpIdx2][0] = snap(arr.waypoints[wpIdx2][0] + dx);
+        }
+      }
+    } else if (seg.lineId) {
+      var ln = findById(seg.lineId);
+      if (ln && ln.points) {
+        var idx1 = seg.segIndex;
+        var idx2 = seg.segIndex + 1;
+        if (seg.isHorizontal) {
+          if (idx1 >= 0 && idx1 < ln.points.length) ln.points[idx1][1] = snap(ln.points[idx1][1] + dy);
+          if (idx2 >= 0 && idx2 < ln.points.length) ln.points[idx2][1] = snap(ln.points[idx2][1] + dy);
+        } else {
+          if (idx1 >= 0 && idx1 < ln.points.length) ln.points[idx1][0] = snap(ln.points[idx1][0] + dx);
+          if (idx2 >= 0 && idx2 < ln.points.length) ln.points[idx2][0] = snap(ln.points[idx2][0] + dx);
+        }
+      }
+    }
+    seg.startPos = { x: p.x, y: p.y };
+    render();
+    return;
+  }
+
   // Active waypoint drag
   if (state.waypointDrag) {
     var owner = findById(state.waypointDrag.ownerId);
@@ -249,6 +358,30 @@ canvasWrap.addEventListener('mousemove', function(e) {
       } else if (state.waypointDrag.type === 'line' && owner.points) {
         owner.points[state.waypointDrag.index] = sp;
       }
+      render();
+    }
+    return;
+  }
+
+  // Active marquee selection — only activate after minimum drag distance
+  if (state.marquee) {
+    var mdx = Math.abs(p.x - state.marquee.startX);
+    var mdy = Math.abs(p.y - state.marquee.startY);
+    if (mdx > 10 || mdy > 10) {
+      state.marquee.endX = p.x;
+      state.marquee.endY = p.y;
+      render();
+    }
+    return;
+  }
+
+  // Active label drag
+  if (state.labelDrag) {
+    var arr = findById(state.labelDrag.arrowId);
+    if (arr) {
+      var dx = p.x - state.labelDrag.startX;
+      var dy = p.y - state.labelDrag.startY;
+      arr.labelOffset = [state.labelDrag.origOffset[0] + dx, state.labelDrag.origOffset[1] + dy];
       render();
     }
     return;
@@ -265,12 +398,25 @@ canvasWrap.addEventListener('mousemove', function(e) {
     return;
   }
 
-  // Hover cursor: check if near a box edge
+  // Hover cursor: check for box edges, then segments
   if (state.tool === 'select') {
     var cursor = 'default';
+    // Box edge resize cursor
     for (var i = state.elements.length - 1; i >= 0; i--) {
       var edge = detectEdge(p, state.elements[i]);
       if (edge) { cursor = edgeCursor(edge); break; }
+    }
+    // Arrow endpoint cursor (takes priority over resize)
+    if (cursor === 'default' || cursor.includes('resize')) {
+      var epHover = hitTestArrowEndpoint(p);
+      if (epHover) cursor = 'crosshair';
+    }
+    // Segment drag cursor (if not already showing endpoint or edge cursor)
+    if (cursor === 'default') {
+      var segHover = hitTestSegment(p);
+      if (segHover) {
+        cursor = segHover.isHorizontal ? 'ns-resize' : 'ew-resize';
+      }
     }
     canvasWrap.style.cursor = cursor;
   }
@@ -290,12 +436,42 @@ canvasWrap.addEventListener('mousedown', function(e) {
       if (edge) { resizeTarget = state.elements[i]; resizeEdge = edge; break; }
     }
 
-    // Check for waypoint drag first
-    var wpHit = hitTestWaypoint(p);
-    if (wpHit) {
+    // Check for arrow endpoint drag first
+    var epHit = hitTestArrowEndpoint(p);
+    var segHit = !epHit ? hitTestSegment(p) : null;
+    var wpHit = (!epHit && !segHit) ? hitTestWaypoint(p) : null;
+
+    if (epHit) {
+      saveUndoState();
+      selectElement(findById(epHit.arrowId));
+      state.endpointDrag = epHit;
+      canvasWrap.style.cursor = 'crosshair';
+    } else if (segHit) {
+      var owner = findById(segHit.arrowId || segHit.lineId);
+      if (owner) selectElement(owner);
+      saveUndoState();
+      state.segmentDrag = segHit;
+      state.segmentDrag.startPos = { x: p.x, y: p.y };
+      canvasWrap.style.cursor = segHit.isHorizontal ? 'ns-resize' : 'ew-resize';
+
+      // For arrows: convert auto-routed path to manual waypoints so we can drag them
+      if (segHit.arrowId) {
+        var arr = findById(segHit.arrowId);
+        if (arr && (!arr.waypoints || arr.waypoints.length === 0)) {
+          // Store the auto-routed intermediate points as manual waypoints
+          var pts = segHit.allPts;
+          arr.waypoints = [];
+          for (var wi = 1; wi < pts.length - 1; wi++) {
+            arr.waypoints.push([pts[wi][0], pts[wi][1]]);
+          }
+        }
+      }
+    } else if (wpHit) {
+      saveUndoState();
       selectElement(findById(wpHit.ownerId));
       state.waypointDrag = wpHit;
     } else if (resizeTarget && resizeEdge) {
+      saveUndoState();
       selectElement(resizeTarget);
       state.resizing = {
         id: resizeTarget.id,
@@ -309,17 +485,29 @@ canvasWrap.addEventListener('mousedown', function(e) {
       if (hit) {
         selectElement(hit);
         // Only drag boxes and annotations (they have x,y)
-        if (hit.type === 'box' || hit.type === 'annotation') {
+        if (hit._hitLabel && hit.type === 'arrow') {
+          // Dragging an arrow's label
+          var labelArr = findById(hit.id);
+          if (labelArr && labelArr._labelPos) {
+            saveUndoState();
+            state.labelDrag = { arrowId: hit.id, startX: p.x, startY: p.y, origOffset: labelArr.labelOffset ? [labelArr.labelOffset[0], labelArr.labelOffset[1]] : [0, 0] };
+          }
+        } else if (hit.type === 'box' || hit.type === 'annotation') {
+          saveUndoState();
           state.dragging = hit.id;
           state.dragOffset = { x: p.x - hit.x, y: p.y - hit.y };
         }
       } else {
+        // Empty space click — start marquee selection
+        state.marquee = { startX: p.x, startY: p.y };
+        state.multiSelect = [];
         selectElement(null);
       }
     }
   } else if (state.tool === 'box') {
     var sp = snapPt(p);
     var el = { id: genId(), type: 'box', label: 'Label', numeral: '', x: sp.x, y: sp.y, w: 160, h: 50, style: 'solid' };
+    saveUndoState();
     state.elements.push(el);
     render();
     selectElement(el);
@@ -339,6 +527,7 @@ canvasWrap.addEventListener('mousedown', function(e) {
           style: state.arrowStyle, label: '',
           bidirectional: document.getElementById('bidir-check').checked,
         };
+        saveUndoState();
         state.arrows.push(arr);
         state.arrowFrom = null;
         state.arrowWaypoints = [];
@@ -356,7 +545,8 @@ canvasWrap.addEventListener('mousedown', function(e) {
     }
   } else if (state.tool === 'annotation') {
     var sp = snapPt(p);
-    var ann = { id: genId(), type: 'annotation', text: 'Annotation', x: sp.x, y: sp.y };
+    var ann = { id: genId(), type: 'annotation', text: 'Text', x: sp.x, y: sp.y, fontSize: 12, bold: false };
+    saveUndoState();
     state.annotations.push(ann);
     render();
     selectElement(ann);
@@ -373,11 +563,122 @@ canvasWrap.addEventListener('mousedown', function(e) {
   }
 });
 
-canvasWrap.addEventListener('mouseup', function() {
+canvasWrap.addEventListener('mouseup', function(e) {
+  // Complete arrow endpoint reconnection
+  if (state.endpointDrag) {
+    var p = getCanvasPos(e);
+    var arr = findById(state.endpointDrag.arrowId);
+    if (arr) {
+      // Check if released on a box
+      var targetBox = null;
+      for (var i = state.elements.length - 1; i >= 0; i--) {
+        var el = state.elements[i];
+        if (p.x >= el.x - el.w/2 && p.x <= el.x + el.w/2 && p.y >= el.y - el.h/2 && p.y <= el.y + el.h/2) {
+          targetBox = el;
+          break;
+        }
+      }
+      if (targetBox) {
+        // Find the nearest anchor point on the target box
+        var allAnchors = ['top', 'top-left', 'top-right', 'bottom', 'bottom-left', 'bottom-right', 'left', 'left-top', 'left-bottom', 'right', 'right-top', 'right-bottom'];
+        var bestAnchor = 'top';
+        var bestDist = Infinity;
+        for (var ai = 0; ai < allAnchors.length; ai++) {
+          var ap = anchorPoint(targetBox, allAnchors[ai]);
+          var d = Math.sqrt((p.x - ap[0]) * (p.x - ap[0]) + (p.y - ap[1]) * (p.y - ap[1]));
+          if (d < bestDist) { bestDist = d; bestAnchor = allAnchors[ai]; }
+        }
+        if (state.endpointDrag.end === 'start') {
+          arr.fromId = targetBox.id;
+          arr.fromAnchor = bestAnchor;
+        } else {
+          arr.toId = targetBox.id;
+          arr.toAnchor = bestAnchor;
+        }
+
+        // Fix orthogonality: ensure the segment between the nearest
+        // waypoint and the new anchor is orthogonal by adjusting or
+        // inserting a waypoint
+        if (arr.waypoints && arr.waypoints.length > 0) {
+          var newAnchorPt = anchorPoint(targetBox, bestAnchor);
+          if (state.endpointDrag.end === 'end') {
+            // Last waypoint → new end anchor must be orthogonal
+            var lastWp = arr.waypoints[arr.waypoints.length - 1];
+            if (lastWp[0] !== newAnchorPt[0] && lastWp[1] !== newAnchorPt[1]) {
+              // Neither aligned — insert a corner waypoint
+              // Go horizontal from last waypoint, then vertical to anchor
+              arr.waypoints.push([snap(newAnchorPt[0]), snap(lastWp[1])]);
+            }
+          } else {
+            // New start anchor → first waypoint must be orthogonal
+            var firstWp = arr.waypoints[0];
+            if (firstWp[0] !== newAnchorPt[0] && firstWp[1] !== newAnchorPt[1]) {
+              // Insert a corner waypoint at the beginning
+              arr.waypoints.unshift([snap(firstWp[0]), snap(newAnchorPt[1])]);
+            }
+          }
+        }
+      }
+    }
+    state.endpointDrag = null;
+    canvasWrap.style.cursor = 'default';
+    render();
+  }
+
+  // Complete marquee selection (only if it was actually dragged)
+  if (state.marquee && !state.marquee.endX) {
+    state.marquee = null; // click without drag — just clear
+  }
+  if (state.marquee && state.marquee.endX != null) {
+    var mx1 = Math.min(state.marquee.startX, state.marquee.endX);
+    var my1 = Math.min(state.marquee.startY, state.marquee.endY);
+    var mx2 = Math.max(state.marquee.startX, state.marquee.endX);
+    var my2 = Math.max(state.marquee.startY, state.marquee.endY);
+    // Select all boxes and annotations within the rectangle
+    var selected = [];
+    state.elements.forEach(function(el) {
+      if (el.x >= mx1 && el.x <= mx2 && el.y >= my1 && el.y <= my2) selected.push(el);
+    });
+    state.annotations.forEach(function(ann) {
+      if (ann.x >= mx1 && ann.x <= mx2 && ann.y >= my1 && ann.y <= my2) selected.push(ann);
+    });
+    state.multiSelect = selected.map(function(el) { return el.id; });
+    if (selected.length === 1) {
+      selectElement(selected[0]);
+    } else if (selected.length > 1) {
+      state.selected = null;
+      // Multi-select: set up for group drag
+      state.multiDragReady = { ids: state.multiSelect, startX: state.marquee.endX, startY: state.marquee.endY };
+    }
+    state.marquee = null;
+    render();
+  }
+
   state.dragging = null;
   state.dragOffset = null;
   state.resizing = null;
+  if (state.waypointDrag) {
+    // Fix orthogonality after waypoint drag
+    var wpOwner = findById(state.waypointDrag.ownerId);
+    if (wpOwner && wpOwner.type === 'arrow' && wpOwner.waypoints) {
+      fixArrowOrthogonality(wpOwner);
+    }
+  }
   state.waypointDrag = null;
+  state.labelDrag = null;
+  if (state.segmentDrag) {
+    // After segment drag, fix orthogonality at anchor connections
+    var seg = state.segmentDrag;
+    if (seg.arrowId) {
+      var arr = findById(seg.arrowId);
+      if (arr && arr.waypoints && arr.waypoints.length > 0) {
+        fixArrowOrthogonality(arr);
+      }
+    }
+    state.segmentDrag = null;
+    canvasWrap.style.cursor = 'default';
+    render();
+  }
 });
 
 canvasWrap.addEventListener('dblclick', function(e) {
@@ -385,6 +686,7 @@ canvasWrap.addEventListener('dblclick', function(e) {
   // Finish line drawing
   if (state.tool === 'line' && state.linePoints && state.linePoints.length >= 2) {
     var ln = { id: genId(), type: 'line', points: state.linePoints, style: state.arrowStyle };
+    saveUndoState();
     state.lines.push(ln);
     state.linePoints = null;
     render();
@@ -426,10 +728,24 @@ function hitTest(p) {
     var el = state.elements[i];
     if (p.x >= el.x - el.w/2 && p.x <= el.x + el.w/2 && p.y >= el.y - el.h/2 && p.y <= el.y + el.h/2) return el;
   }
-  // Check annotations
+  // Check arrow labels
+  for (var i = state.arrows.length - 1; i >= 0; i--) {
+    var arr = state.arrows[i];
+    if (arr.label && arr._labelPos) {
+      var lp = arr._labelPos;
+      var halfW = Math.max(30, arr.label.length * 3.5);
+      if (Math.abs(p.x - lp[0]) < halfW && Math.abs(p.y - lp[1]) < 8) {
+        return { id: arr.id, type: 'arrow', _hitLabel: true };
+      }
+    }
+  }
+  // Check annotations — hit area scales with font size and text length
   for (var i = state.annotations.length - 1; i >= 0; i--) {
     var a = state.annotations[i];
-    if (Math.abs(p.x - a.x) < 60 && Math.abs(p.y - a.y) < 12) return a;
+    var fs = a.fontSize || 10;
+    var halfWidth = Math.max(40, (a.text || '').length * fs * 0.35);
+    var halfHeight = fs * 0.8;
+    if (Math.abs(p.x - a.x) < halfWidth && Math.abs(p.y - a.y) < halfHeight) return a;
   }
   // Check arrows (point-to-segment distance across all segments)
   for (var i = state.arrows.length - 1; i >= 0; i--) {
@@ -472,6 +788,57 @@ function getArrowSegments(arr) {
 function getLinePoints(ln) {
   if (ln.points) return ln.points;
   return [[ln.x1, ln.y1], [ln.x2, ln.y2]];
+}
+
+function hitTestSegment(p) {
+  var SEG_DIST = 8 / view.zoom;
+  // Check arrows — find which segment of the routed path was clicked
+  for (var i = state.arrows.length - 1; i >= 0; i--) {
+    var arr = state.arrows[i];
+    var pts = routeOrthogonal(arr);
+    if (pts.length < 3) continue; // need at least 3 points to have a draggable middle segment
+    // Skip first and last segments (those are anchored to boxes)
+    for (var j = 1; j < pts.length - 2; j++) {
+      var dist = pointToSegmentDist(p.x, p.y, pts[j][0], pts[j][1], pts[j+1][0], pts[j+1][1]);
+      if (dist < SEG_DIST) {
+        // Determine if horizontal or vertical segment
+        var isHorizontal = Math.abs(pts[j][1] - pts[j+1][1]) < 2;
+        return { arrowId: arr.id, segIndex: j, isHorizontal: isHorizontal, allPts: pts };
+      }
+    }
+  }
+  // Check lines
+  for (var i = state.lines.length - 1; i >= 0; i--) {
+    var ln = state.lines[i];
+    var pts = getLinePoints(ln);
+    if (pts.length < 3) continue;
+    for (var j = 1; j < pts.length - 2; j++) {
+      var dist = pointToSegmentDist(p.x, p.y, pts[j][0], pts[j][1], pts[j+1][0], pts[j+1][1]);
+      if (dist < SEG_DIST) {
+        var isHorizontal = Math.abs(pts[j][1] - pts[j+1][1]) < 2;
+        return { lineId: ln.id, segIndex: j, isHorizontal: isHorizontal };
+      }
+    }
+  }
+  return null;
+}
+
+function hitTestArrowEndpoint(p) {
+  // Only check selected arrow's endpoints — the diamond handles are only visible when selected
+  var EP_RADIUS = 12 / view.zoom;
+  for (var i = state.arrows.length - 1; i >= 0; i--) {
+    var arr = state.arrows[i];
+    if (arr.id !== state.selected) continue; // only selected arrows show endpoint handles
+    var a = getArrowAnchors(arr);
+    if (!a.p1) continue;
+    if (Math.abs(p.x - a.p1[0]) < EP_RADIUS && Math.abs(p.y - a.p1[1]) < EP_RADIUS) {
+      return { arrowId: arr.id, end: 'start' };
+    }
+    if (Math.abs(p.x - a.p2[0]) < EP_RADIUS && Math.abs(p.y - a.p2[1]) < EP_RADIUS) {
+      return { arrowId: arr.id, end: 'end' };
+    }
+  }
+  return null;
 }
 
 function hitTestWaypoint(p) {
@@ -534,12 +901,15 @@ function renderProps(el) {
   } else if (el.type === 'arrow') {
     html += propInput('Label', 'prop-label', el.label);
     html += propSelect('Style', 'prop-style', el.style, ['solid', 'dashed']);
-    html += propSelect('Source anchor', 'prop-fromAnchor', el.fromAnchor || 'auto', ['auto', 'top', 'bottom', 'left', 'right']);
-    html += propSelect('Target anchor', 'prop-toAnchor', el.toAnchor || 'auto', ['auto', 'top', 'bottom', 'left', 'right']);
+    var anchorOpts = ['auto', 'top', 'top-left', 'top-right', 'bottom', 'bottom-left', 'bottom-right', 'left', 'left-top', 'left-bottom', 'right', 'right-top', 'right-bottom'];
+    html += propSelect('Source anchor', 'prop-fromAnchor', el.fromAnchor || 'auto', anchorOpts);
+    html += propSelect('Target anchor', 'prop-toAnchor', el.toAnchor || 'auto', anchorOpts);
     html += '<div class="prop-row"><label style="font-size:11px;color:#888;display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="prop-bidir"' + (el.bidirectional ? ' checked' : '') + ' onchange="updateProp(\'bidirectional\',this.checked)"> Bidirectional</label></div>';
     html += '<div class="prop-row"><button class="tool-btn" onclick="deleteSelected()" style="color:#ff6666;border-color:#553333;">Delete</button></div>';
   } else if (el.type === 'annotation') {
     html += propInput('Text', 'prop-text', el.text);
+    html += propInput('Font Size', 'prop-fontSize', el.fontSize || 10);
+    html += '<div class="prop-row"><label style="font-size:11px;color:#888;display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="prop-bold"' + (el.bold ? ' checked' : '') + ' onchange="updateProp(\'bold\',this.checked)"> Bold</label></div>';
     html += '<div class="prop-row"><button class="tool-btn" onclick="deleteSelected()" style="color:#ff6666;border-color:#553333;">Delete</button></div>';
   } else if (el.type === 'line') {
     html += propSelect('Style', 'prop-style', el.style, ['solid', 'dashed']);
@@ -555,6 +925,7 @@ function renderProps(el) {
       var prop = inp.getAttribute('data-prop');
       var val = inp.value;
       if (prop === 'w' || prop === 'h') val = parseInt(val) || 50;
+      if (prop === 'fontSize') val = parseInt(val) || 10;
       updateProp(prop, val);
     });
   });
@@ -574,6 +945,7 @@ function propSelect(label, id, value, options) {
 function updateProp(prop, value) {
   var el = findById(state.selected);
   if (!el) return;
+  saveUndoState();
   // "auto" anchor means remove the override
   if ((prop === 'fromAnchor' || prop === 'toAnchor') && value === 'auto') {
     delete el[prop];
@@ -585,6 +957,7 @@ function updateProp(prop, value) {
 
 function deleteSelected() {
   if (!state.selected) return;
+  saveUndoState();
   var id = state.selected;
   state.elements = state.elements.filter(function(e) { return e.id !== id; });
   state.arrows = state.arrows.filter(function(e) { return e.id !== id && e.fromId !== id && e.toId !== id; });
@@ -599,6 +972,9 @@ function deleteSelected() {
 document.addEventListener('keydown', function(e) {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
   if ((e.key === 'Delete' || e.key === 'Backspace') && state.selected) { deleteSelected(); e.preventDefault(); }
+  if (e.key === 'z' && (e.metaKey || e.ctrlKey) && !e.shiftKey) { e.preventDefault(); undo(); }
+  if (e.key === 'z' && (e.metaKey || e.ctrlKey) && e.shiftKey) { e.preventDefault(); redo(); }
+  if (e.key === 'y' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); redo(); }
   if (e.key === 'Escape') { state.arrowWaypoints = []; state.linePoints = null; setTool('select'); selectElement(null); render(); }
   if (e.key === 'b') setTool('box');
   if (e.key === 'a') setTool('arrow');
@@ -714,7 +1090,8 @@ function render() {
     rect.setAttribute('x', x); rect.setAttribute('y', y);
     rect.setAttribute('width', el.w); rect.setAttribute('height', el.h);
     rect.setAttribute('rx', '0'); rect.setAttribute('fill', 'white');
-    rect.setAttribute('stroke', state.selected === el.id ? '#4466cc' : '#111');
+    var isMultiSel = state.multiSelect && state.multiSelect.indexOf(el.id) >= 0;
+    rect.setAttribute('stroke', (state.selected === el.id || isMultiSel) ? '#4466cc' : '#111');
     rect.setAttribute('stroke-width', state.selected === el.id ? '2' : '1.5');
     if (el.style === 'dashed') rect.setAttribute('stroke-dasharray', '5,3');
     g.appendChild(rect);
@@ -768,18 +1145,42 @@ function render() {
         svg.appendChild(c);
       }
     }
+    // Endpoint handles when selected — diamond shapes at start/end for drag-to-reconnect
+    if (isSelected) {
+      var a = getArrowAnchors(arr);
+      if (a.p1) {
+        [a.p1, a.p2].forEach(function(pt) {
+          var diamond = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+          var s = 6;
+          diamond.setAttribute('points',
+            (pt[0]) + ',' + (pt[1] - s) + ' ' +
+            (pt[0] + s) + ',' + (pt[1]) + ' ' +
+            (pt[0]) + ',' + (pt[1] + s) + ' ' +
+            (pt[0] - s) + ',' + (pt[1])
+          );
+          diamond.setAttribute('fill', '#cc4466');
+          diamond.setAttribute('stroke', 'white');
+          diamond.setAttribute('stroke-width', '1.5');
+          svg.appendChild(diamond);
+        });
+      }
+    }
 
     if (arr.label) {
-      // Place label at midpoint of the full path
+      // Place label at midpoint of the full path, offset by labelOffset if dragged
       var midIdx = Math.floor(allPts.length / 2);
       var midA = allPts[midIdx - 1] || allPts[0];
       var midB = allPts[midIdx];
-      var mx = (midA[0] + midB[0]) / 2;
-      var my = (midA[1] + midB[1]) / 2 - 10;
+      var lox = (arr.labelOffset ? arr.labelOffset[0] : 0);
+      var loy = (arr.labelOffset ? arr.labelOffset[1] : 0);
+      var mx = (midA[0] + midB[0]) / 2 + lox;
+      var my = (midA[1] + midB[1]) / 2 - 10 + loy;
+      arr._labelPos = [mx, my]; // store for hit testing
       var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       text.setAttribute('x', mx); text.setAttribute('y', my);
       text.setAttribute('text-anchor', 'middle'); text.setAttribute('font-size', '9');
-      text.setAttribute('fill', '#777'); text.setAttribute('font-style', 'italic');
+      text.setAttribute('fill', state.selected === arr.id ? '#4466cc' : '#777');
+      text.setAttribute('font-style', 'italic');
       text.textContent = arr.label;
       svg.appendChild(text);
     }
@@ -789,11 +1190,70 @@ function render() {
   state.annotations.forEach(function(ann) {
     var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', ann.x); text.setAttribute('y', ann.y);
-    text.setAttribute('text-anchor', 'middle'); text.setAttribute('font-size', '10');
-    text.setAttribute('fill', state.selected === ann.id ? '#4466cc' : '#555');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-size', ann.fontSize || 10);
+    if (ann.bold) text.setAttribute('font-weight', 'bold');
+    text.setAttribute('fill', state.selected === ann.id ? '#4466cc' : '#111');
     text.textContent = ann.text;
     svg.appendChild(text);
   });
+
+  // Endpoint drag preview — show anchor points on all boxes + snap
+  if (state.endpointDrag && state.endpointDrag.currentPos) {
+    var dragArr = findById(state.endpointDrag.arrowId);
+    if (dragArr) {
+      var a = getArrowAnchors(dragArr);
+      if (a.p1) {
+        var fixedPt = state.endpointDrag.end === 'start' ? a.p2 : a.p1;
+        var dragPt = state.endpointDrag.currentPos;
+
+        // Show anchor points on all boxes
+        var allAnchorNames = ['top', 'top-left', 'top-right', 'bottom', 'bottom-left', 'bottom-right', 'left', 'left-top', 'left-bottom', 'right', 'right-top', 'right-bottom'];
+        var snapDist = 15 / view.zoom;
+        var snappedPt = dragPt;
+        var bestSnapDist = Infinity;
+        state.elements.forEach(function(el) {
+          for (var ai = 0; ai < allAnchorNames.length; ai++) {
+            var ap = anchorPoint(el, allAnchorNames[ai]);
+            // Draw anchor dot
+            var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dot.setAttribute('cx', ap[0]); dot.setAttribute('cy', ap[1]);
+            dot.setAttribute('r', '3'); dot.setAttribute('fill', 'rgba(204,68,102,0.4)');
+            dot.setAttribute('stroke', '#cc4466'); dot.setAttribute('stroke-width', '0.5');
+            svg.appendChild(dot);
+            // Check for snap
+            var d = Math.sqrt((dragPt[0] - ap[0]) * (dragPt[0] - ap[0]) + (dragPt[1] - ap[1]) * (dragPt[1] - ap[1]));
+            if (d < snapDist && d < bestSnapDist) {
+              bestSnapDist = d;
+              snappedPt = ap;
+            }
+          }
+        });
+
+        // Highlight snapped anchor
+        if (snappedPt !== dragPt) {
+          var snapHighlight = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          snapHighlight.setAttribute('cx', snappedPt[0]); snapHighlight.setAttribute('cy', snappedPt[1]);
+          snapHighlight.setAttribute('r', '6'); snapHighlight.setAttribute('fill', 'rgba(204,68,102,0.3)');
+          snapHighlight.setAttribute('stroke', '#cc4466'); snapHighlight.setAttribute('stroke-width', '2');
+          svg.appendChild(snapHighlight);
+        }
+
+        var prev = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        prev.setAttribute('x1', fixedPt[0]); prev.setAttribute('y1', fixedPt[1]);
+        prev.setAttribute('x2', snappedPt[0]); prev.setAttribute('y2', snappedPt[1]);
+        prev.setAttribute('stroke', '#4466cc'); prev.setAttribute('stroke-width', '1.5');
+        prev.setAttribute('stroke-dasharray', '6,4');
+        prev.setAttribute('marker-end', 'url(#ah)');
+        svg.appendChild(prev);
+        // Draw a circle at cursor/snap point
+        var circ = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circ.setAttribute('cx', snappedPt[0]); circ.setAttribute('cy', snappedPt[1]);
+        circ.setAttribute('r', '5'); circ.setAttribute('fill', '#4466cc'); circ.setAttribute('opacity', '0.5');
+        svg.appendChild(circ);
+      }
+    }
+  }
 
   // In-progress arrow waypoints
   if (state.arrowFrom && state.arrowWaypoints && state.arrowWaypoints.length > 0) {
@@ -832,6 +1292,21 @@ function render() {
       svg.appendChild(c);
     }
   }
+
+  // Marquee selection rectangle
+  if (state.marquee && state.marquee.endX != null) {
+    var mx = Math.min(state.marquee.startX, state.marquee.endX);
+    var my = Math.min(state.marquee.startY, state.marquee.endY);
+    var mw = Math.abs(state.marquee.endX - state.marquee.startX);
+    var mh = Math.abs(state.marquee.endY - state.marquee.startY);
+    var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', mx); rect.setAttribute('y', my);
+    rect.setAttribute('width', mw); rect.setAttribute('height', mh);
+    rect.setAttribute('fill', 'rgba(68,102,204,0.08)');
+    rect.setAttribute('stroke', '#4466cc'); rect.setAttribute('stroke-width', '1');
+    rect.setAttribute('stroke-dasharray', '4,3');
+    svg.appendChild(rect);
+  }
 }
 
 function inferAnchor(from, to) {
@@ -844,11 +1319,25 @@ function inferAnchor(from, to) {
 }
 
 function anchorPoint(el, dir) {
+  var qw = el.w / 4; // quarter width for 3-per-side
+  var qh = el.h / 4; // quarter height for 3-per-side
   switch(dir) {
-    case 'top':    return [el.x, el.y - el.h/2];
-    case 'bottom': return [el.x, el.y + el.h/2];
-    case 'left':   return [el.x - el.w/2, el.y];
-    case 'right':  return [el.x + el.w/2, el.y];
+    // Top side: left, center, right
+    case 'top':         return [el.x, el.y - el.h/2];
+    case 'top-left':    return [el.x - qw, el.y - el.h/2];
+    case 'top-right':   return [el.x + qw, el.y - el.h/2];
+    // Bottom side: left, center, right
+    case 'bottom':      return [el.x, el.y + el.h/2];
+    case 'bottom-left': return [el.x - qw, el.y + el.h/2];
+    case 'bottom-right':return [el.x + qw, el.y + el.h/2];
+    // Left side: top, center, bottom
+    case 'left':        return [el.x - el.w/2, el.y];
+    case 'left-top':    return [el.x - el.w/2, el.y - qh];
+    case 'left-bottom': return [el.x - el.w/2, el.y + qh];
+    // Right side: top, center, bottom
+    case 'right':       return [el.x + el.w/2, el.y];
+    case 'right-top':   return [el.x + el.w/2, el.y - qh];
+    case 'right-bottom':return [el.x + el.w/2, el.y + qh];
   }
   return [el.x, el.y];
 }
@@ -890,9 +1379,21 @@ function routeOrthogonal(arr) {
   var a = getArrowAnchors(arr);
   if (!a.p1) return [];
 
-  // If arrow has manual waypoints, build orthogonal segments through them
+  // If arrow has manual waypoints, enforce orthogonality between all consecutive points
   if (arr.waypoints && arr.waypoints.length > 0) {
-    return [a.p1].concat(arr.waypoints).concat([a.p2]);
+    var rawPts = [a.p1].concat(arr.waypoints).concat([a.p2]);
+    var orthPts = [rawPts[0]];
+    for (var oi = 1; oi < rawPts.length; oi++) {
+      var prev = orthPts[orthPts.length - 1];
+      var curr = rawPts[oi];
+      // If not aligned horizontally or vertically, insert a corner
+      if (Math.abs(prev[0] - curr[0]) > 1 && Math.abs(prev[1] - curr[1]) > 1) {
+        // Go horizontal first, then vertical
+        orthPts.push([curr[0], prev[1]]);
+      }
+      orthPts.push(curr);
+    }
+    return orthPts;
   }
 
   var p1 = a.p1, p2 = a.p2;
@@ -1002,6 +1503,45 @@ function rerouteAroundBoxes(path, obstacles) {
   return result;
 }
 
+function fixArrowOrthogonality(arr) {
+  // Ensure first waypoint is orthogonal to start anchor and last waypoint
+  // is orthogonal to end anchor
+  if (!arr.waypoints || arr.waypoints.length === 0) return;
+  var a = getArrowAnchors(arr);
+  if (!a.p1) return;
+
+  var startPt = a.p1;
+  var endPt = a.p2;
+  var first = arr.waypoints[0];
+  var last = arr.waypoints[arr.waypoints.length - 1];
+
+  // Fix start → first waypoint orthogonality
+  if (first[0] !== startPt[0] && first[1] !== startPt[1]) {
+    // Diagonal — insert a corner. Extend from anchor direction first.
+    var startDir = arr.fromAnchor || inferAnchor(a.fromEl, a.toEl).from;
+    if (startDir.includes('top') || startDir.includes('bottom')) {
+      // Vertical exit — go vertical to first wp's Y, then horizontal
+      arr.waypoints.unshift([snap(startPt[0]), snap(first[1])]);
+    } else {
+      // Horizontal exit — go horizontal to first wp's X, then vertical
+      arr.waypoints.unshift([snap(first[0]), snap(startPt[1])]);
+    }
+  }
+
+  // Fix last waypoint → end orthogonality
+  last = arr.waypoints[arr.waypoints.length - 1];
+  if (last[0] !== endPt[0] && last[1] !== endPt[1]) {
+    var endDir = arr.toAnchor || inferAnchor(a.fromEl, a.toEl).to;
+    if (endDir.includes('top') || endDir.includes('bottom')) {
+      // Vertical entry — come in vertically from last wp's X
+      arr.waypoints.push([snap(endPt[0]), snap(last[1])]);
+    } else {
+      // Horizontal entry — come in horizontally from last wp's Y
+      arr.waypoints.push([snap(last[0]), snap(endPt[1])]);
+    }
+  }
+}
+
 function simplifyOrthogonal(pts) {
   if (pts.length < 3) return pts;
   var result = [pts[0]];
@@ -1052,10 +1592,14 @@ function exportJSON() {
       if (arr.waypoints && arr.waypoints.length) o.waypoints = arr.waypoints;
       if (arr.fromAnchor) o.fromAnchor = arr.fromAnchor;
       if (arr.toAnchor) o.toAnchor = arr.toAnchor;
+      if (arr.labelOffset && (arr.labelOffset[0] !== 0 || arr.labelOffset[1] !== 0)) o.labelOffset = arr.labelOffset;
       return o;
     }),
     annotations: state.annotations.map(function(a) {
-      return { text: a.text, position: [a.x, a.y] };
+      var o = { text: a.text, position: [a.x, a.y] };
+      if (a.fontSize && a.fontSize !== 10) o.fontSize = a.fontSize;
+      if (a.bold) o.bold = true;
+      return o;
     }),
     lines: state.lines.map(function(l) {
       if (l.points) {
@@ -1130,6 +1674,7 @@ function loadSpec(spec) {
       if (arr.anchors.from) a.fromAnchor = arr.anchors.from;
       if (arr.anchors.to) a.toAnchor = arr.anchors.to;
     }
+    if (arr.labelOffset) a.labelOffset = arr.labelOffset;
     state.arrows.push(a);
   });
 
@@ -1138,6 +1683,8 @@ function loadSpec(spec) {
       id: genId(), type: 'annotation',
       text: Array.isArray(a.text) ? a.text.join(' ') : (a.text || ''),
       x: a.position[0], y: a.position[1],
+      fontSize: a.fontSize || 10,
+      bold: a.bold || false,
     });
   });
 
