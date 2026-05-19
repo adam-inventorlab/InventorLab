@@ -13,7 +13,10 @@
         "name": "Adam Carlson"
       },
       "category": "development",
-      "source": "."
+      "source": {
+        "source": "github",
+        "repo": "adam-inventorlab/InventorLab"
+      }
     }
   ]
 }
