@@ -9,6 +9,16 @@ Configure the current project for InventorLab. This adds passive IP tracking to 
 
 ## Process
 
+**Step 0: Show the InventorLab banner.**
+
+Before anything else, display the InventorLab banner so the user sees the wordmark and a summary of what the plugin provides. Run this with the Bash tool, exactly as written:
+
+```
+node "${CLAUDE_PLUGIN_ROOT}/postinstall.js"
+```
+
+It prints the InventorLab block-lettering banner and the list of available skills. Let its output show to the user, then continue to Step 1.
+
 **Step 1: Explain and confirm.**
 
 Tell the user what you're about to do:
