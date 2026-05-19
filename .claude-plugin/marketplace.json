@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "inventorlab",
+  "description": "InventorLab — AI-powered patent drafting toolkit for Claude Code.",
+  "owner": {
+    "name": "Adam Carlson"
+  },
+  "plugins": [
+    {
+      "name": "inventorlab",
+      "description": "AI-powered patent drafting toolkit for Claude Code. Generate patent figures, audit specifications, and discover inventions.",
+      "author": {
+        "name": "Adam Carlson"
+      },
+      "category": "development",
+      "source": "."
+    }
+  ]
+}

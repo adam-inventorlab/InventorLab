@@ -1,0 +1,8 @@
+{
+  "name": "inventorlab",
+  "version": "2.0.0",
+  "description": "AI-powered patent drafting toolkit for Claude Code. Generate patent figures, audit specifications, and discover inventions.",
+  "author": {
+    "name": "Adam Carlson"
+  }
+}

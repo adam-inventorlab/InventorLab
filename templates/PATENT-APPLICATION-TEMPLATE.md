@@ -135,8 +135,8 @@ In further aspects, the invention provides methods for [list additional aspects]
         placeholder text with the actual figure file references.
 
      5. USE the same reference numerals throughout the Detailed
-        Description. Every time you mention "the reasoning model,"
-        write "the reasoning model (110)." This creates a tight linkage
+        Description. Every time you mention "the prediction module,"
+        write "the prediction module (102)." This creates a tight linkage
         between the figures and the text.
 
      REFERENCE NUMERAL CONVENTION:
@@ -156,7 +156,7 @@ In further aspects, the invention provides methods for [list additional aspects]
 
 *[FIGURES TO BE CREATED USING THE FIGURE EDITOR PRIOR TO FILING]*
 
-**FIG. 1** — [Title — e.g., "System architecture diagram"]. [Brief description of what the figure shows. List key elements with reference numerals: "The figure shows a platform (100) comprising a graph database (102), a reasoning model (110), and a context assembly module (114). Arrows indicate data flow between components."]
+**FIG. 1** — [Title — e.g., "System architecture diagram"]. [Brief description of what the figure shows. List key elements with reference numerals: "The figure shows a system (100) comprising a prediction module (102), a cache store (110), and a request handler (114). Arrows indicate data flow between components."]
 
 <!-- JSON spec: patent-applications/figures/fig-1.json -->
 <!-- SVG output: patent-applications/figures/fig-1.svg -->
@@ -181,13 +181,13 @@ The following description sets forth specific details in order to provide a thor
 
      Rules for reference numerals:
      • First mention of any element: include the numeral and the
-       figure it comes from: "the reasoning model (110, FIG. 1)"
+       figure it comes from: "the prediction module (102, FIG. 1)"
      • Subsequent mentions: include just the numeral:
-       "the reasoning model (110) generates..."
+       "the prediction module (102) generates..."
      • Every section should open by referencing its primary figure:
        "Referring to FIG. 3, the system processes..."
      • Use numerals from OTHER figures when describing interactions:
-       "...which is stored in the graph database (102, FIG. 1)"
+       "...which is stored in the cache store (110, FIG. 1)"
 
      Organize by functional section, not by figure. A section may
      reference multiple figures. The goal is a readable narrative
@@ -269,18 +269,18 @@ Referring to FIG. 2, [continue with the next functional area. Cross-reference el
 
      Example (good — abstracted, clear, plain English):
        A computer-implemented method comprising:
-       (a) at least intermittently building, by an AI agent, a
-           knowledge graph;
-       (b) reasoning, by the AI agent, with portions of the
-           knowledge graph;
-       wherein the AI agent's knowledge graph building and reasoning
-       are mutually influential and reflexive.
+       (a) predicting, by a prefetch engine, a next resource to be
+           requested based on an observed access pattern;
+       (b) loading the predicted resource into a cache before a
+           request for the resource is received;
+       wherein the predicting and the loading are updated as the
+       observed access pattern changes.
 
      Example (too narrow — claims an implementation, not an invention):
        A computer-implemented method comprising:
-       (a) using a Claude Sonnet 4.6 model to generate XML mutations;
-       (b) executing Cypher queries against a FalkorDB instance;
-       (c) embedding nodes using Gemma 12B...
+       (a) storing cached resources in a Redis instance;
+       (b) computing access patterns with a gradient-boosted classifier;
+       (c) prefetching resources over an HTTP/2 connection...
        [This claims specific tools. Someone using different tools
         to achieve the same result would not infringe.]
 
@@ -296,8 +296,8 @@ Referring to FIG. 2, [continue with the next functional area. Cross-reference el
 
      1. SPECIFICITY — They narrow the independent claim in a
         particular direction. "The method of Claim 1, wherein the
-        knowledge graph comprises typed edges encoding intellectual
-        relationships." This is the conventional understanding.
+        cache comprises multiple tiers each having a distinct
+        eviction policy." This is the conventional understanding.
 
      2. INSURANCE — If the independent claim is invalidated by prior
         art, a dependent claim may survive because it's narrower.
@@ -306,9 +306,9 @@ Referring to FIG. 2, [continue with the next functional area. Cross-reference el
      3. REVEALING BREADTH — This is the non-obvious one. A good
         dependent claim can make you realize the independent claim
         is broader than you initially thought. When you write
-        "The method of Claim 1, wherein the AI agent's reasoning
-        in a subsequent session is informed by knowledge graph
-        structure created during a prior session" — you realize
+        "The method of Claim 1, wherein the prefetch engine's
+        prediction in a later session is informed by access
+        patterns recorded in an earlier session" — you realize
         Claim 1 doesn't REQUIRE cross-session persistence, it's
         even broader than that. The dependent claim illuminates
         the independent claim's scope by showing one specific
@@ -388,13 +388,13 @@ Referring to FIG. 2, [continue with the next functional area. Cross-reference el
      • Every claim should be independently defensible — it should
        make sense and be enforceable on its own.
      • Use consistent terminology throughout. If you call it a
-       "knowledge graph" in Claim 1, don't call it a "concept
-       network" in Claim 5.
+       "cache" in Claim 1, don't call it a "buffer store" in
+       Claim 5.
      • Avoid means-plus-function language ("means for generating")
        unless intentional — it limits scope to the specific
        structures described in the specification.
      • Reference numerals from the detailed description can appear
-       in claims in parentheses (e.g., "a reasoning model (110)")
+       in claims in parentheses (e.g., "a prediction module (102)")
        but they do not limit claim scope — they're navigational aids.
      • When in doubt about whether to include a claim, include it.
        A provisional application is the place to be comprehensive.

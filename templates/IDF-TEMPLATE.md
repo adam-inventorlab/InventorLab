@@ -14,7 +14,7 @@
 ## 1. Invention Title
 
 <!-- A clear, descriptive title. Not a marketing name — something that describes what the invention does.
-     Good: "Embedding-Based Diversity Enforcement for AI-Generated Content"
+     Good: "Access-Pattern-Adaptive Cache Prefetching System"
      Bad: "SmartGen Pro" -->
 
 [Title]

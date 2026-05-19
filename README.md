@@ -1,181 +1,207 @@
-# InventorLab for Claude Code
+# InventorLab
 
-A drop-in configuration for [Claude Code](https://claude.ai/claude-code) that turns your AI coding assistant into a continuous intellectual property analyst. As you build, Claude identifies novel methodologies and generates structured IP artifacts — patent claims, paper abstracts, and publication candidates — as a side effect of normal development work.
+**Turn what you're building into patents as you build.**
 
-## What it does
+You're building software. Some of what you build is novel — a clever workaround, a non-obvious combination of techniques, a pattern you invented because nothing existed. That's intellectual property, and it's walking out the door every time you `git push` without documenting it.
 
-When you're working with Claude Code on a project, InventorLab makes Claude:
+InventorLab is a [Claude Code](https://claude.com/claude-code) plugin that watches your code for novel inventions as you build, helps you articulate what makes them non-obvious, and drafts patent applications with figures — all from the terminal.
 
-- **Notice novelty in real time** — as you build features, Claude recognizes when an approach is unusual or not widely documented
-- **Generate structured IP artifacts** — patent-style claims, paper abstracts, prior art differentiation
-- **Maintain a living IP portfolio** — a single file that grows organically as your project develops
-- **Capture context at the point of invention** — rationale, alternatives considered, and problem context are freshest during development, not months later in a patent interview
+## Install
 
-## Setup
-
-### 1. Add the snippet to your CLAUDE.md
-
-Copy the contents of `claude-md-snippet.md` and paste it into your project's `CLAUDE.md` file (create one if it doesn't exist).
-
-### 2. Add the IP tracker template
-
-Copy `IP-TRACKER-TEMPLATE.md` to your project root as `IP-TRACKER.md`.
-
-### 3. Add the patent application template
-
-Copy `PATENT-APPLICATION-TEMPLATE.md`, `figure-editor.html`, and `patent-fig.js` into a `docs/inventorlab/` directory (or wherever you prefer). The template creates patent applications; the editor and renderer create patent figures.
-
-### 4. Work normally
-
-That's it. As you build, Claude will add entries to the IP tracker when it notices novel approaches. When entries are mature:
-
-- **Independent inventors:** Tell Claude to "start a patent application for entry #X" → drafts a full provisional application
-- **Corporate inventors:** Tell Claude to "create an IDF for entry #X" → drafts an Invention Disclosure Form for your IP committee
-
-## File structure
+InventorLab is a [Claude Code](https://claude.com/claude-code) plugin. Install it through Claude Code's plugin system:
 
 ```
-your-project/
-  CLAUDE.md                              ← contains the InventorLab snippet
-  IP-TRACKER.md                          ← living tracker (identification)
-  docs/inventorlab/
-    PATENT-APPLICATION-TEMPLATE.md       ← provisional application template
-    IDF-TEMPLATE.md                      ← invention disclosure form template
-    figure-editor.html                   ← visual patent figure editor
-    patent-fig.js                        ← CLI figure renderer (optional)
-  patent-applications/                   ← for independent inventors
-    your-first-invention.md              ← created from template when ready
-    figures/
-      fig-1.json                         ← figure specs (Claude generates these)
-      fig-1.svg                          ← exported SVGs (you create in the editor)
-  invention-disclosures/                 ← for corporate inventors
-    your-first-invention.md              ← created from IDF template
+/plugin marketplace add adam-inventorlab/InventorLab
+/plugin install inventorlab@inventorlab
 ```
 
-## How it works
+Then run `/inventorlab-setup` in your project to configure CLAUDE.md and enable IP tracking.
 
-Claude Code reads `CLAUDE.md` at the start of every conversation. The InventorLab snippet instructs Claude to:
+## What It Does
 
-1. **Identify** — monitor the work being done for novel approaches. When something qualifies, add a structured entry to `IP-TRACKER.md` with summary, novelty analysis, paper angle, and patent angle. Mention the addition to the user.
-2. **Formalize** — two paths depending on your situation:
-   - **Patent application** (independent inventors): drafts a full provisional with background, claims, detailed description with reference numerals, and figure specs following the built-in claim-drafting guide
-   - **Invention Disclosure Form** (corporate inventors): drafts an IDF with problem statement, invention description, inventive step analysis, prior art, and commercial relevance — formatted for your company's IP committee
-3. **Iterate** — as the project evolves, entries get updated, new entries get added, and applications get refined. The tracker is the intake funnel; the applications and IDFs are the formalized output.
+### It watches while you work
+**Invention Radar** runs in the background. When you write code that looks novel — a workaround for an AI limitation, an inverted design pattern, a technique you built because no library existed — it flags it:
 
-The patent application template includes an embedded claim-drafting guide (in comments) that teaches Claude how to write effective patent claims: broad independent claims with minimal elements, dependent chains for specificity, alternate angle claims for coverage, and hybrid claims that combine inventions.
+> *"Interesting — instead of retrying on failure, this falls back to a completely different strategy. That failover pattern is non-obvious. Added to IP tracker. Try `/disclosure-session` when you're ready to dig in."*
 
-## What qualifies as "novel"
+### It helps you think
+**`/ideation-session`** is divergent brainstorming. Describe a problem or a direction, and Claude explores it with you — importing patterns from other domains, inverting assumptions, following threads. Ideas that stick get tracked.
 
-The snippet includes both active triggers (things Claude checks for as it works) and passive triggers (signals it watches for during conversation):
+**`/disclosure-session`** is convergent. Point it at code you've already built, and it reads the mechanism, asks probing questions, and helps you articulate the inventive step: *"What would a skilled engineer have done instead? Why wouldn't they have arrived at your approach?"*
 
-**Active triggers:**
-- **Invention around failure** — when a standard approach fails and you build a workaround, the workaround is often the IP
-- **Non-obvious combinations** — when combining two techniques produces emergent results neither could achieve alone
-- **Structural solutions to AI limitations** — when you move a decision from a model to deterministic code because the model can't handle it reliably
-- **Inverted patterns** — when you flip a standard interaction pattern (AI initiates instead of responds, system prevents instead of enables)
-- **The thing you built because nothing existed** — when you can't find a prior solution, the absence is evidence of novelty
+### It writes the paperwork
+**`/disclosure-form`** walks you through creating a formal Invention Disclosure Form — the document IP committees use to decide whether to file. Section by section, interactively.
 
-**Passive triggers:**
-- User expresses surprise or excitement about an approach
-- User asks "is this novel?"
-- Explaining the approach requires describing a non-obvious mechanism
-- A technique built for one purpose applies to a different domain
+**`/patent-draft`** generates a full provisional patent application: specification, claims, and figure specs. Point it at an IDF or IP tracker entries and it produces a filing-ready draft.
 
-Claude also performs periodic self-audits at natural stopping points and cross-references new findings against existing entries to avoid duplication.
+**`/patent-figures`** generates all patent figures as a project file for the built-in visual editor — system diagrams, flowcharts, conceptual frameworks, swimlanes, and data structure diagrams.
 
-## Customization
+**`/patent-audit`** checks everything for consistency — reference numerals match between spec and figures, claim dependencies point to the right parents, nothing was double-shifted during editing.
 
-Edit the snippet to fit your domain. The template entries are from an AI research platform — replace them with examples relevant to your field. The structure (Summary, What makes it novel, Paper angle, Patent angle) works across domains, but you can adjust the fields.
+### It scans what you've already built
+**`/invention-check full`** audits your entire codebase for novel approaches you may have missed. It looks for invention-around-failure patterns, non-obvious combinations, structural solutions to AI limitations, inverted patterns, and cross-domain applications.
 
-## Limitations
+## The Pipeline
 
-- Claude's assessment of novelty is based on its training data, not a patent search. Treat all entries as **candidates for review**, not confirmed novel inventions.
-- This is not legal advice. Consult IP counsel before filing anything.
-- The quality of IP identification depends on Claude having context about what you're building. Projects with good CLAUDE.md documentation produce better results.
+```
+  Build something          ──→  Invention Radar detects signal
+                                        │
+  Or scan existing code    ──→  /invention-check full
+                                        │
+                                        ▼
+                               Silent prior art search
+                              (Novelty Gate — you see nothing)
+                                        │
+                              ┌─────────┴──────────┐
+                              ▼                     ▼
+                           PASSES                  FAILS
+                        (flagged to you)         (silently filtered)
+                              │
+                              ▼
+                     /disclosure-session
+                  "What's the inventive step?"
+                    + strategic questioning
+                   informed by prior art
+                              │
+                  ┌───────────┼───────────┐
+                  ▼           ▼           ▼
+           /patent-draft  /disclosure   /whitepaper
+            Provisional     -form       Technical
+            application   Formal IDF    whitepaper
+                  │                         │
+             ┌────┴────┐                    ▼
+             ▼         ▼                  Figures
+       /patent-   /patent-             (auto-opens
+        figures     audit                editor)
+       (auto-opens             │
+        editor)         │
+             │          │
+             └────┬─────┘
+                  ▼
+       Review with IP counsel → File
 
-## AI-Assisted Invention, Not AI Invention
+  /portfolio — see everything, what's covered, what needs attention
+  /prior-art — search, refresh, overcome at any time
+```
 
-Patent law requires that inventors be natural persons. AI cannot be named as an inventor (*Thaler v. Vidal*, Fed. Cir. 2022). However, AI-*assisted* invention — where a human conceives, directs, and evaluates, using AI as a tool — is fully patentable.
+## All Skills
 
-The USPTO's [Revised Inventorship Guidance for AI-Assisted Inventions](https://www.federalregister.gov/documents/2025/11/28/2025-21457/revised-inventorship-guidance-for-ai-assisted-inventions) (November 2025) explicitly classifies AI systems as "instruments used by human inventors, analogous to laboratory equipment, computer software, research databases, or any other tool." The guidance eliminated the Pannu factor analysis for single-inventor AI-assisted cases — if a natural person uses AI as a tool and forms a "definite and permanent idea" of the invention, they're the inventor.
+### Discovery
 
-InventorLab is designed with this framework built in:
-- The **CLAUDE.md snippet** instructs Claude to position itself as an assistive tool, not an inventor — framing IP as "here's what *you* built that's novel"
-- The **patent application template** includes an AI-assisted invention statement documenting that the human directed the inventive work, citing the current USPTO guidance and relevant case law
-- The **workflow itself** creates contemporaneous documentation that the AI was configured as an instrument and the human exercised inventive judgment
+**`/invention-check`** — Scan your code for novel approaches
+- `/invention-check full` — audit the entire codebase
+- `/invention-check recent` — scan only recent changes
+- `/invention-check path/to/file.js` — scan a specific file or directory
+- **When to use:** Periodically (e.g., after completing a feature), or when you suspect you've built something novel but aren't sure. Good for catching inventions you didn't notice while building.
 
-This structural framing produces a paper trail that may be valuable if inventorship is ever questioned.
+**Invention Radar** (always-on, no invocation needed) — Monitors your code as you write it. When you build something that looks even slightly novel, it silently drafts claims from multiple angles, runs a prior art search, and only flags it to you if it survives. You never see the false positives.
+- **When it activates:** Automatically, during normal development. The sensitivity level (1-10, set during setup) controls how aggressively it searches.
 
-## What to do with your patent application
+### Exploration
 
-Once you have a draft application, here's the practical path forward. This is general information, not legal advice — consult a patent attorney for your specific situation.
+**`/ideation-session [topic or problem]`** — Divergent brainstorming
+- `/ideation-session adaptive rate limiting` — explore a topic
+- `/ideation-session "how to prevent cache staleness"` — explore a problem
+- `/ideation-session` — open-ended: "What's on your mind?"
+- **When to use:** When you're stuck, curious, or want to explore a design space before building. Uses cross-domain imports, inversions, constraint removal, and combinatorial thinking. Promising ideas get a quick prior art check before suggesting you track them.
 
-### Step 1: File a provisional patent application
+**`/prior-art [topic or entry number]`** — Search for prior art
+- `/prior-art adaptive cache prefetching` — search on a topic
+- `/prior-art 16` — search on IP Tracker entry #16
+- `/prior-art all` — scan all entries that haven't been searched
+- `/prior-art refresh 16` — re-run search after the invention evolved
+- `/prior-art overcome 16` — evaluate whether recent changes overcome previously found prior art
+- **When to use:** Before any formal IP work (disclosure, patent draft). Also when an invention evolves — new features may overcome old prior art or create new distinguishing elements. The Novelty Gate does quick searches automatically, but `/prior-art` does a thorough search with distinction analysis from multiple angles.
 
-A provisional application is the best first move for most software inventors. It's simpler and cheaper than a full (non-provisional) application, and it does one critical thing: **establishes your priority date**. That date is what matters if someone else files something similar later.
+### Articulation
 
-**What it costs:**
-- Micro entity (most independent developers): ~$160
-- Small entity (companies under 500 employees): ~$320
-- Large entity: ~$640
+**`/disclosure-session [file, topic, or entry number]`** — Articulate an invention
+- `/disclosure-session lib/cache/prefetch.js` — start from code
+- `/disclosure-session "the adaptive cache prefetching system"` — start from a topic
+- `/disclosure-session 16` — start from IP Tracker entry #16
+- `/disclosure-session` — choose from IP Tracker entries
+- **When to use:** When you've built something novel and want to articulate exactly what makes it non-obvious. Interactive and conversational — Claude Code reads your code, asks probing questions (informed by silent prior art research), and helps you find the inventive step in your own words.
 
-**How to file:**
-- Create an account at [USPTO Patent Center](https://patentcenter.uspto.gov)
-- Select "Provisional" application type
-- Upload your draft application as a PDF (the markdown exports cleanly to PDF)
-- Upload your figure SVGs
-- Pay the filing fee
-- You'll receive a provisional application number and filing date
+### Documentation
 
-**What you don't need for a provisional:**
-- Formal claims (though including them, as InventorLab generates, strengthens your filing)
-- Formal drawings (your SVGs from the figure editor are sufficient)
-- An attorney (though having one review is always wise)
+**`/disclosure-form [entry number or topic]`** — Create an Invention Disclosure Form
+- `/disclosure-form 16` — from IP Tracker entry
+- `/disclosure-form` — choose interactively
+- **When to use:** When working at a company that has an IP committee. The IDF is the internal document they use to decide whether to file. Walk-through format, section by section.
 
-### Step 2: Use your 12-month window wisely
+**`/patent-draft [entry numbers or IDF path]`** — Draft a provisional patent application
+- `/patent-draft 1,3,5` — cover specific IP Tracker entries
+- `/patent-draft invention-disclosures/adaptive-cache-prefetching.md` — from an IDF
+- `/patent-draft` — choose interactively
+- **When to use:** When you're ready to draft a filing. Generates the full specification (broad-to-narrow with liberal "in some implementations" language and concrete examples), claims (informed by prior art search), and figures (auto-opens the editor). Review with IP counsel before filing.
 
-A provisional gives you **12 months** from the filing date. During that time:
+**`/whitepaper [topic or entry numbers]`** — Generate a technical whitepaper
+- `/whitepaper "adaptive cache prefetching"` — on a topic
+- `/whitepaper 11,27` — covering specific IP entries
+- **When to use:** When you want to explain your system publicly — to peers, potential adopters, or the community. Also for defensive publication: establishing prior art that prevents others from patenting your approach. Different voice than a patent (honest about limitations, generous with citations, engaging narrative).
 
-- **Validate the market** — is this invention worth the cost of a full patent? Is anyone else doing it?
-- **Refine your claims** — as you continue developing, you may discover better ways to frame the invention
-- **Consider a prior art search** — a patent attorney or search firm can assess what already exists and how your claims hold up against it
-- **Decide whether to proceed** — not every provisional needs to become a non-provisional. The provisional protects your priority date while you decide.
+**`/patent-figures [spec file]`** — Generate patent figures
+- `/patent-figures PATENT-APPLICATION.md` — from a spec
+- `/patent-figures` — uses default spec location
+- **When to use:** After drafting a patent application, or to regenerate figures after spec changes. Creates a project.json with all figures, runs the visual review loop, and auto-opens the figure editor.
 
-If you don't file a non-provisional before the 12 months expire, the provisional lapses and your priority date is lost. The provisional itself is never published and never becomes a patent — it only serves as a priority placeholder.
+**`/patent-audit [spec file]`** — Audit a patent application
+- `/patent-audit PATENT-APPLICATION.md` — check a specific file
+- **When to use:** Before submitting to IP counsel. Checks reference numeral consistency, claim support in the spec, figure alignment, and cross-references.
 
-### Step 3: Convert to a non-provisional (when ready)
+### Management
 
-This is where professional help matters most. A patent attorney will:
+**`/portfolio`** — View and manage your IP document portfolio
+- `/portfolio` — dashboard showing all documents, status, and attention items
+- `/portfolio create patent 1,3,5` — create a new patent draft
+- `/portfolio create idf 11` — create a new IDF
+- `/portfolio create whitepaper "topic"` — create a new whitepaper
+- `/portfolio update P-001` — review and update a specific document
+- `/portfolio check` — scan for stale documents, uncovered entries, stale prior art
+- **When to use:** To see the big picture — what's been captured, what's covered, what needs attention. Especially useful when managing multiple patents, IDFs, and whitepapers across many inventions.
 
-- Conduct or review a prior art search
-- Refine your claims to maximize scope while avoiding prior art
-- Format the application to USPTO standards
-- Handle prosecution (responding to examiner rejections and office actions)
-- Advise on continuation and divisional strategies if you have multiple inventions
+### Setup
 
-**What InventorLab saves you:** A well-drafted provisional with structured claims, detailed descriptions, and figure specs significantly reduces the time (and therefore cost) your attorney spends. Instead of starting from a conversation about what you built, they start from a near-complete document.
+**`/inventorlab-setup`** — Configure InventorLab for a new project
+- **When to use:** Once, at the start of a project. Sets sensitivity level, output goals, creates working documents (IP Tracker, Claim Strategy Notebook, Prior Art Registry, Portfolio). Explains the invention boundary and USPTO compliance.
 
-### What InventorLab gives you vs. what it doesn't
+## What makes InventorLab different
 
-| InventorLab provides | InventorLab does NOT provide |
-|---|---|
-| Structured draft application | Prior art search |
-| Claim families (broad, dependent, alternate) | Freedom-to-operate analysis |
-| Figure specs + visual editor | Prosecution strategy |
-| AI-assisted invention documentation | Legal advice or attorney-client relationship |
-| IP identification during development | Novelty or patentability opinion |
-| Living IP portfolio | Filing or submission to the USPTO |
+### The Novelty Gate
+Before flagging anything to you, Claude Code silently drafts claims from multiple angles (method, system, interaction — broad to narrow), searches for prior art against each claim, runs anticipation and obviousness analysis, and produces a survivability matrix. Only inventions that survive reach you. The IP Tracker stays high-signal, not a dump of everything that felt novel.
 
-## Disclaimer
+### Prior Art Searching
+- `/prior-art [topic]` — full search with distinction analysis from multiple angles
+- `/prior-art refresh [N]` — re-search after an invention evolves
+- `/prior-art overcome [N]` — evaluate whether new features overcome previously found prior art
+- Prior art findings go to PRIOR-ART.md — a structured registry mapping findings to each IP Tracker entry
+- **Intellectual Firewall** — prior art informs assessment only, never design. Teachings from prior art are never incorporated into your inventions.
 
-This tool is provided as-is for informational and educational purposes only. **Nothing in this repository constitutes legal advice, patent counsel, or professional work product.** The templates, claim-drafting guide, and generated outputs are starting points for discussion with qualified intellectual property counsel — not substitutes for it. The authors are not acting as your attorneys and no attorney-client relationship is created by using this tool. Patent law is jurisdiction-specific and fact-dependent; consult a registered patent attorney or agent before making filing decisions.
+### Whitepapers and Defensive Publication
+- `/whitepaper [topic]` — generate a technical whitepaper with literature search, Background and Related Work, honest Discussion section
+- A whitepaper published publicly establishes prior art that prevents others from patenting the approaches it describes.
+
+### Portfolio Management
+- `/portfolio` — dashboard of all your IP documents, their status, what they cover, what needs attention
+- Tracks which IP Tracker entries are covered by which documents
+- Flags stale prior art, uncovered entries, documents that need updating
+- Cross-document consistency checks
+
+### The Invention Boundary
+Claude Code assists but never invents. During IP work, if a response would cross from helping you develop YOUR idea into Claude Code generating a distinct idea of its own, it refuses and asks you to rephrase. Outside IP work, Claude Code can brainstorm freely — but if you later try to patent an idea that originated from Claude Code, it will flag that and decline.
+
+## Also Included
+
+- **Figure Editor** — visual HTML editor for patent and whitepaper diagrams with orthogonal connector routing, multi-page tabs, SVG import, PDF export, layout optimizer
+- **Templates** — patent application, IDF, and whitepaper templates
+- **CLAUDE.md snippet** — conventions for passive IP tracking, prior art workflow, USPTO compliance, and the intellectual firewall
+
+## USPTO Compliance
+
+All skills adhere to the USPTO's **November 2025 Revised Inventorship Guidance for AI-Assisted Inventions**. There is no special standard for AI-assisted inventions — the same conception test applies to all inventions. Claude Code functions as an assistive tool. The touchstone is whether the human inventor had the invention "clearly defined in the inventor's mind." Claude Code helps articulate and formalize; the user conceives, directs, and evaluates.
+
+Provenance logs are maintained automatically during disclosure and ideation sessions, documenting who conceived what and what role Claude Code played — providing contemporaneous evidence of inventorship if ever needed.
 
 ## License
 
-This configuration is released into the public domain under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Use it however you want.
-
-## Origin
-
-Developed at the [Kairos Frontier Institute](https://kairosfrontier.institute) during the construction of a human-AI collaborative research platform. The approach produced 30+ paper candidates and 25+ patent entries organically during active development sessions.
-
-Learn more at [inventorlab.ai](https://inventorlab.ai)
+MIT
