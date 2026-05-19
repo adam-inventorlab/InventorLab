@@ -14,8 +14,8 @@
       },
       "category": "development",
       "source": {
-        "source": "github",
-        "repo": "adam-inventorlab/InventorLab"
+        "source": "url",
+        "url": "https://github.com/adam-inventorlab/InventorLab.git"
       }
     }
   ]
