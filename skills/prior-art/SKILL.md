@@ -146,12 +146,27 @@ Generate 10-15 search queries targeting both the full combination and individual
 
 ### 4. Execute searches
 
-Use WebSearch for each query. For promising results, use WebFetch to read the full content. Focus on:
+Run prior-art queries through **two complementary search modalities in parallel** and merge the results. Neither alone catches everything; together they cover the substantive prior-art surface.
 
-- **Patents and patent applications** — these are the most relevant for patentability
-- **Academic papers** — especially those describing systems or methods
-- **Technical blog posts and documentation** — may constitute prior art if published before the invention date
-- **Open source projects** — code that implements similar approaches
+**Structured sources via the bundled MCP server.** Call `search_prior_art_all` with the query for each claim framing — this fans out in parallel to:
+
+- **Google Patents BigQuery** — patents and applications across ~100 jurisdictions, full-text indexed
+- **arXiv** — preprints (CS, math, physics, statistics)
+- **Semantic Scholar** — peer-reviewed papers with citation counts
+
+For finer control, the individual tools (`search_google_patents`, `search_arxiv`, `search_semantic_scholar`) can be called directly. All structured-source results return typed fields (title, abstract, classifications, dates, citation counts, jurisdiction) that feed directly into the anticipation and obviousness analysis in step 5.
+
+**Web search via WebSearch.** Run the same queries against general web search to catch prior art that does not appear in patent or academic indexes — technical blog posts, open-source projects (GitHub READMEs, project documentation, code), conference talks, product launches, internal company docs published externally, news articles, vendor whitepapers. Web search is often the only route to this kind of non-traditional prior art, and it is frequently the most disqualifying when present. Use `WebFetch` on promising results to read the full content.
+
+**Run both modalities for each query, in parallel.** Treat them as complementary, not alternative. The structured tools give authoritative coverage of the formal patent and academic literature; web search gives broad coverage of everything else. Merge the results into a single working set, deduplicate by URL or near-match title (a paper indexed in Semantic Scholar may also appear in a web result), and rank by relevance to the claim framing.
+
+Focus on:
+
+- **Patents and patent applications** — most directly relevant for patentability. Structured tools surface these by default; the `cpc` classifications on returned results let you assess overlap with the invention's likely classification region
+- **Academic papers** — especially peer-reviewed or well-cited. Semantic Scholar's `citation_count` field is a strong signal of importance
+- **Technical blog posts and documentation** — may constitute prior art if published before the invention date. Web search is the primary route
+- **Open source projects** — code that implements similar approaches. Web search plus targeted `site:github.com` queries
+- **Conference talks and slides** — often surface only via web search, but are valid prior art if publicly accessible
 
 ### 5. Analyze findings
 

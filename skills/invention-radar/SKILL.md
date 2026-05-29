@@ -96,6 +96,8 @@ Search for each draft claim's key elements, both individually and in combination
 
 The draft claims make the search precise. Instead of searching for "cache prefetching," you search for "predicting next resource from access pattern AND loading into cache before request AND adapting prediction as pattern changes" — which is what the actual claim would cover.
 
+**Execute searches via two complementary modalities in parallel.** Use the bundled `search_prior_art_all` MCP tool for structured coverage of patents (Google Patents BigQuery, global), preprints (arXiv), and peer-reviewed papers with citation counts (Semantic Scholar). Use `WebSearch` in parallel for broader coverage of blog posts, open-source projects, GitHub READMEs, conference talks, product launches, vendor docs, and general technical literature that isn't indexed by the structured sources. Treat the two modalities as complementary — neither alone catches everything. Structured results carry typed metadata (classifications, dates, citation counts) that feeds directly into the obviousness analysis below; web results often surface exactly the non-traditional prior art the structured indexes miss and are often the most disqualifying when present. Merge findings, deduplicate by URL or near-match title, and use both in the survivability matrix.
+
 ### Step 3: Obviousness analysis (user sees nothing)
 
 If the full combination isn't found in a single reference (no anticipation), check for **obviousness** — could a person of ordinary skill combine existing references to arrive at the invention?
