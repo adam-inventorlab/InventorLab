@@ -64,41 +64,66 @@ If given an IP Tracker entry number, read IP-TRACKER.md and extract the inventio
 
 ### 2. Draft a portfolio of pre-search claims
 
-Before searching, draft 8-12 lightweight claim framings of the invention. These are disposable — written to make the search precise and to discover which angles survive prior art. The key insight: different framings of the same invention have different prior art vulnerabilities. Finding out which survive upfront is the whole point.
+Before searching, draft 8-12 lightweight claim framings of the invention. These are disposable — written to make the search precise and to discover which framings survive prior art. Different framings of the same invention have different prior-art vulnerabilities. Finding out which survive upfront is the whole point.
 
-**Claim types:**
+A claim framing varies along several **independent dimensions**. **Vary along as many as the invention admits, and compose dimensions to produce a wide net.** No single dimension exhausts the search space; the goal is coverage, not redundancy.
+
+**Statutory form (the parallel three-angle set).** Always include at least one framing each as:
+- **Method claim**: "A method comprising: [steps]..."
 - **System claim**: "A system comprising: [components and functions]..."
-- **Interaction claim**: "A method for enabling [outcome] by [mechanism]..."
-- **Data/structure claim** (if applicable): "A data structure comprising: [elements and relationships]..."
+- **Computer-readable medium / data-structure claim**: "A non-transitory computer-readable medium storing instructions..." or "A data structure comprising: [elements and relationships]..."
 
-**Multiple method claims with different emphasis:**
-Each method claim foregrounds a different feature as the key inventive element. The same invention, told from different angles:
+The three statutory forms search different patent-corpus subsets: method claims dominate in software/process patents; system claims dominate in hardware/architecture patents; medium and data-structure claims dominate where storage or transmission is the inventive locus.
 
-- **Mechanism-focused**: Emphasizes the core technique — what makes it work
-- **Sequence-focused**: Emphasizes ordering — what happens first, what depends on what
-- **Feedback-focused**: Emphasizes loops — how outputs modify future inputs
-- **Integration-focused**: Emphasizes how components combine — what crosses system boundaries
-- **Outcome-focused**: Emphasizes what's achieved — the capability, not the mechanism
-- **Negative-focused**: Emphasizes what's prevented — "without requiring [thing prior art needs]"
+Beyond statutory form, vary along the following dimensions, and compose them:
 
-**Different perspectives on the same invention:**
-- **Builder's perspective**: How you construct and configure it
-- **Operator's perspective**: How it behaves at runtime
-- **User's perspective**: What it enables from the outside
-- **Data's perspective**: What happens to information as it flows through
+**Scope dimension — zoom in / zoom out.**
+- **Broadest principle (zoom out)**: strip every technology-specific term to its abstract equivalent. "A Redis instance" → "a data store." "Cosine similarity" → "a similarity measure." "A gradient-boosted classifier" → "a computational model." Find the inventive principle that survives independent of implementation choices. Most vulnerable to prior art; most valuable if it survives.
+- **Mid-abstraction**: re-introduce 1-2 domain-specific anchors. Technology-agnostic but more constrained.
+- **Implementation-specific (zoom in on the mechanism)**: the actual technique with its actual components, fully named. Most defensible against prior-art rejection; narrowest in coverage.
 
-**Varying scope — broad to narrow via abstraction:**
-For each angle, draft claims at different levels of specificity. Broad claims require active abstraction — finding the general principle underneath the specific implementation:
+A claim drafted at the principle level finds prior art that uses entirely different technology to do the same thing. A claim drafted at the mechanism level finds prior art that names the same technique under different terminology. You need both.
 
-- **Broadest (maximum abstraction)**: Ask: "What is this REALLY doing at the most fundamental level?" Replace every technology-specific term with its abstract equivalent. "A Redis instance" → "a data store." "Cosine similarity" → "a similarity measure." "A gradient-boosted classifier" → "a computational model." The broadest claim captures the inventive principle independent of any technology choice. Most vulnerable to prior art but most valuable if it survives.
-- **Medium**: Re-introduces 1-2 domain-specific features. Technology-agnostic but more constrained.
-- **Narrowest**: Implementation-specific. Defensible, limited coverage.
+**Feature-emphasis dimension — which element carries the novelty.** The same invention is rarely novel along every dimension simultaneously. Identify which feature is doing the inventive work, then draft framings where different features carry that weight:
+- **Mechanism-as-novelty**: the technique itself is the inventive step.
+- **Sequence-as-novelty**: the ordering is the inventive step; the components are known but their interaction order is new.
+- **Feedback-as-novelty**: a loop modifies its own future inputs in a way prior art doesn't.
+- **Integration-as-novelty**: components are known but they cross a boundary that prior art keeps separate.
+- **Outcome-as-novelty**: the achievement is what's novel; the means are familiar but the result is qualitatively different.
+- **Negative-as-novelty**: the invention works *without* a constraint prior art requires; the inventive step is what is *not* needed.
 
-The abstraction process often reveals that the invention is more general than the user realized — a technique built for one kind of data store might actually be a general method for any typed relational data store. Broad claims protect that generality.
+For each framing, search as if that aspect alone is the inventive part. Different aspects yield different search hits because different patent and academic literatures cluster around different inventive emphases.
 
-The broadest surviving claim becomes the independent claim. Narrower survivors become dependents — fallback positions. The scope at which prior art starts catching the claim tells you exactly how broad your protection can be.
+**Aspect dimension — what kind of claim character.** Patent-attorney drafting characterizes claims by what kind of property they assert. Each aspect is a different search target:
+- **Structural**: what the invention *is* (components, data layout, system topology)
+- **Functional**: what it *does* (operations, transformations, capabilities)
+- **Behavioral**: how it *behaves* under conditions (responses to inputs, state transitions)
+- **Architectural**: how its parts *relate* (interfaces, dependencies, control flow)
+- **Interactive**: what it *exchanges* with its environment (inputs, outputs, side effects)
+- **Procedural**: the *steps* it executes (the method as an ordered sequence)
+- **Outcome**: the *result* it produces from the outside
+- **Negative**: what it *prevents* or *avoids* (claims framed against a constraint)
 
-Each claim gets searched independently. The result is a survivability matrix showing which framings at which scope hold up — revealing not just where the novelty lives, but how wide the moat is.
+**Perspective dimension — vantage point.**
+- **Builder's perspective**: how you construct and configure it
+- **Operator's perspective**: how it behaves at runtime
+- **User's perspective**: what it enables from the outside
+- **Data's perspective**: what happens to information as it flows through
+
+**Temporal dimension — snapshot / sequence / lifecycle.**
+- **Snapshot**: the invention at a single moment — its instantaneous configuration
+- **Sequence**: the invention as an ordered series of steps — what happens in what order
+- **Lifecycle**: the invention as a process unfolding over time — including state birth, transformation, and retirement
+
+Same invention, searched as a snapshot vs. as a lifecycle, finds different prior art. Patent literature is biased toward snapshots; academic literature is biased toward lifecycles. Drafting both ensures both literatures are surveyed.
+
+**Domain dimension — transposition into adjacent fields.** Some inventions have analogs in adjacent fields under different terminology. A graph-based memory architecture might have analogs in cognitive psychology, database theory, knowledge representation, and graph neural networks — under four different vocabularies. **Always draft at least one framing that asks: *what would this mechanism be called in a different field?*** The Novelty Gate's biggest false negatives are inventions that have prior art in a vocabulary the inventor doesn't know.
+
+---
+
+**Composing dimensions.** Framings don't have to be one-dimensional. A single framing can be (for example) "the broadest abstraction of the mechanism viewed from the operator's perspective as a lifecycle, transposed into the language of database systems" — that's one framing composing five dimensions. Draft enough framings that each dimension is exercised at least twice, that no dimension dominates the portfolio, and that compositions exercise pairs of dimensions you suspect of being independently vulnerable to prior art.
+
+The result is a survivability matrix: for each framing, which dimensions hold up against prior art and which collapse. The broadest framing that survives along the most dimensions becomes the independent claim. Framings that survive only along narrower dimensions become dependent claims — fallback positions if the independent is challenged. The scope at which prior art starts catching the claim, on each dimension, tells you exactly how broad your protection can be along that dimension.
 
 ### 3. Formulate search queries from the draft claims
 
@@ -119,7 +144,7 @@ Generate 10-15 search queries targeting both the full combination and individual
 - **Alternative approaches**: Search for different solutions to the same problem
   - `[problem being solved] solution approach system`
 
-### 3. Execute searches
+### 4. Execute searches
 
 Use WebSearch for each query. For promising results, use WebFetch to read the full content. Focus on:
 
@@ -128,7 +153,7 @@ Use WebSearch for each query. For promising results, use WebFetch to read the fu
 - **Technical blog posts and documentation** — may constitute prior art if published before the invention date
 - **Open source projects** — code that implements similar approaches
 
-### 4. Analyze findings
+### 5. Analyze findings
 
 **Anticipation analysis (35 U.S.C. 102):** For each reference, check whether it teaches ALL elements of any draft claim. A single reference that covers every limitation of a claim anticipates it — the claim is not novel.
 
@@ -159,7 +184,36 @@ For each significant piece of prior art found, document:
   - **Medium**: References cover components but the combination is arguably non-obvious; claims need careful distinguishing language
   - **Low**: Tangentially related; worth noting but doesn't threaten claims under either 102 or 103
 
-### 5. Produce the prior art report
+### 6. Generate amendments to distinguish over close prior art
+
+When the analysis identifies high or medium-threat references, the response is **not** to kill the threatened framing. The response is to draft amendments that distinguish the claim over the reference and see whether the amended claim still captures something genuinely novel.
+
+This serves two purposes:
+
+1. **Diagnostic.** The amendment that's required to distinguish tells you exactly where the actual novelty lives. If you have to add "wherein the data store is reflexively constructed by the same agent that reads it" to overcome a reference, the reflexivity is the inventive step. The amendment is a finger pointing at the load-bearing limitation.
+2. **Recovery.** The amended claim — narrower than the original but distinguishing over the prior art — is a candidate dependent claim or even a revised independent. Prior art that would have killed the original framing now bounds the claim from below, not extinguishes it.
+
+For each high or medium-threat reference:
+
+- **Identify what the reference teaches.** Be specific about which claim limitations it covers, element by element.
+- **Identify what the reference does NOT teach.** Compare against the invention as it actually exists. What is present in the invention that the reference doesn't have?
+- **Draft a narrowing amendment.** Add the missing limitation to the claim. The amendment phrasing should be:
+  - **Specific enough** that the limitation is observable in the invention but not in the reference.
+  - **General enough** that it captures the inventive principle, not just an incidental implementation choice.
+  - **Functional or structural** rather than purely lexical — "wherein the X is performed [how / by what mechanism]" rather than just renaming the same concept.
+- **Draft a pivoting amendment.** Instead of narrowing along the same dimension, restructure the claim to a different dimension (see Section 2). If the reference is killing the procedural framing, try amending to a structural framing that points at the same invention. The original scope is preserved but the claim character shifts. If the procedural pivot also gets caught, try the perspective pivot, the temporal-frame pivot, or the domain transposition.
+- **Verify the amendment.** Re-evaluate against the original reference: does the amended claim now distinguish? Then re-search against the new amendment language: does the amended claim survive a fresh prior-art sweep, or does the amendment language itself find new references?
+- **Record the amendment.** In the survivability matrix, each amended framing is a new entry. Note what the amendment cost in scope: the amendment narrowed the claim along one dimension to escape prior art on another, or pivoted to a different dimension and preserved scope.
+
+**The amendment portfolio is informative even when filing is not the goal.** When the user is deciding whether to pursue patent protection, the amendment depth reveals the actual size and shape of the defensible IP:
+
+- A claim that needs only a single small amendment to distinguish from existing prior art is defensible *and* broad — strong IP.
+- A claim that needs three or more significant amendments to distinguish is defensible but narrow — the IP is real but the moat is thin.
+- A claim that cannot be amended to distinguish without losing the inventive concept is not patentable — but the negative result is itself the right answer, and worth reporting cleanly.
+
+Iterate steps 5 and 6 until the survivability matrix stabilizes — meaning every surviving framing has either been fully analyzed against the prior-art catalog or amended to the point where further amendment would dissolve the inventive concept. The stable matrix is what the report describes.
+
+### 7. Produce the prior art report
 
 Output a structured report:
 
@@ -236,7 +290,7 @@ These ranked features directly inform independent claim drafting — the top fea
 - [Databases not checked that should be]
 ```
 
-### 6. Update working documents
+### 8. Update working documents
 
 **Prior Art Registry** (PRIOR-ART.md):
 - This is the primary record. Add a section for the invention with all findings.
