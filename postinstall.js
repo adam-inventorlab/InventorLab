@@ -1,31 +1,5 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-
-// Build the bundled MCP server. The prior-art MCP server has its own
-// node_modules and its own TypeScript build. We run npm install + npm run
-// build inside the subdir so that Claude Code can spawn it via the
-// mcpServers entry in .claude-plugin/plugin.json. Failures are non-fatal:
-// if Node 20+ isn't available, or the network is blocked, we surface a
-// warning and continue — the rest of the plugin still works.
-(function buildMcpPriorArt() {
-  const mcpDir = path.join(__dirname, 'mcp-prior-art');
-  if (!fs.existsSync(path.join(mcpDir, 'package.json'))) return;
-  try {
-    process.stdout.write('Installing inventorlab-prior-art MCP server...\n');
-    execSync('npm install --no-audit --no-fund --silent', { cwd: mcpDir, stdio: 'inherit' });
-    execSync('npm run build --silent', { cwd: mcpDir, stdio: 'inherit' });
-  } catch (e) {
-    process.stderr.write(
-      '\nWarning: Could not build the inventorlab-prior-art MCP server.\n' +
-      'The rest of InventorLab still works; prior-art searches will fall back to web search.\n' +
-      'To retry manually: cd mcp-prior-art && npm install && npm run build\n\n',
-    );
-  }
-})();
-
 const RESET = '\x1b[0m';
 const BOLD = '\x1b[1m';
 const DIM = '\x1b[2m';
