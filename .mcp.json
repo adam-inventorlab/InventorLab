@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "inventorlab-prior-art": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp-prior-art/dist/index.js"]
+    }
+  }
+}
