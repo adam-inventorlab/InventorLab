@@ -168,13 +168,14 @@ Then run `/inventorlab-setup` in your project to configure CLAUDE.md and enable 
 ## What makes InventorLab different
 
 ### The Novelty Gate
-Before flagging anything to you, Claude Code silently drafts claims from multiple angles (method, system, interaction — broad to narrow), searches for prior art against each claim, runs anticipation and obviousness analysis, and produces a survivability matrix. Only inventions that survive reach you. The IP Tracker stays high-signal, not a dump of everything that felt novel.
+Before flagging anything to you, Claude Code silently drafts claims along **six independent dimensions** — scope (zoom in on the mechanism, zoom out to the broad principle), feature emphasis, aspect (structural / functional / behavioral / procedural / negative), perspective (builder / operator / user / data), temporal frame (snapshot / sequence / lifecycle), and domain transposition (what would this be called in an adjacent field). Each framing is searched against the prior-art landscape, evaluated for anticipation and obviousness, and **amended where it meets close prior art** — narrowing or pivoting along a different dimension. The amendments themselves are diagnostic: the limitation required to distinguish is, in effect, the load-bearing inventive step. Only candidates whose framings survive the amendment pass reach you. The IP Tracker stays high-signal, not a dump of everything that felt novel.
 
 ### Prior Art Searching
-- `/prior-art [topic]` — full search with distinction analysis from multiple angles
+- `/prior-art [topic]` — full search with distinction analysis along the six drafting dimensions, plus an explicit amendment pass against close prior art
 - `/prior-art refresh [N]` — re-search after an invention evolves
 - `/prior-art overcome [N]` — evaluate whether new features overcome previously found prior art
 - Prior art findings go to PRIOR-ART.md — a structured registry mapping findings to each IP Tracker entry
+- **Backed by a dedicated MCP server** (`mcp-prior-art/`) that exposes Google Patents BigQuery, arXiv, and Semantic Scholar as typed tools, letting the Novelty Gate and `/prior-art` skill query structured sources rather than relying on generic web search. See `mcp-prior-art/README.md` for the setup details.
 - **Intellectual Firewall** — prior art informs assessment only, never design. Teachings from prior art are never incorporated into your inventions.
 
 ### Whitepapers and Defensive Publication
@@ -194,6 +195,7 @@ Claude Code assists but never invents. During IP work, if a response would cross
 
 - **Figure Editor** — visual HTML editor for patent and whitepaper diagrams with orthogonal connector routing, multi-page tabs, SVG import, PDF export, layout optimizer
 - **Templates** — patent application, IDF, and whitepaper templates
+- **Prior-art MCP server** (`mcp-prior-art/`) — exposes Google Patents BigQuery, arXiv, and Semantic Scholar as typed tool calls to the Novelty Gate and `/prior-art` skill. Installed and built automatically by the plugin's postinstall step.
 - **CLAUDE.md snippet** — conventions for passive IP tracking, prior art workflow, USPTO compliance, and the intellectual firewall
 
 ## USPTO Compliance
