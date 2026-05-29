@@ -3,11 +3,19 @@
 // Exposes prior-art search tools to Claude Code via stdio transport.
 //
 // Tools:
-//   search_patentsview        — USPTO PatentsView (US patents, free)
 //   search_google_patents     — Google Patents BigQuery (global, requires GCP creds)
 //   search_arxiv              — arXiv preprints (free)
 //   search_semantic_scholar   — Semantic Scholar (peer-reviewed, free + optional key)
 //   search_prior_art_all      — parallel fan-out across all sources, merged
+//
+// Note on US-only sources: USPTO PatentsView was retired and replaced by the
+// USPTO Open Data Portal (ODP). ODP would add per-user credential friction
+// (every InventorLab user would need their own USPTO API key) without
+// meaningfully expanding the corpus — Google Patents BigQuery already
+// indexes the USPTO grant feed and covers the US. We do not ship a
+// US-specific source. If freshness on patents granted within the last 1-3
+// weeks ever becomes important, ODP can be added as a fourth source
+// without touching the others.
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -16,7 +24,6 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import { searchPatentsview } from './sources/patentsview.js';
 import { searchGooglePatents } from './sources/google-patents.js';
 import { searchArxiv } from './sources/arxiv.js';
 import { searchSemanticScholar } from './sources/semantic-scholar.js';
@@ -32,23 +39,9 @@ const QUALITY_SCHEMA = {
 
 const TOOL_DEFS = [
   {
-    name: 'search_patentsview',
-    description:
-      'Search the USPTO PatentsView 2.0 database. Returns US-granted patents matching the query. Free, no auth required. Best for US-focused prior art. Title and abstract are searched together.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        query: { type: 'string', description: 'Natural-language or keyword query.' },
-        limit: { type: 'number', description: 'Max results. Default 5 (fast) or 25 (thorough).' },
-        quality: QUALITY_SCHEMA,
-      },
-      required: ['query'],
-    },
-  },
-  {
     name: 'search_google_patents',
     description:
-      'Search the Google Patents public dataset via BigQuery. Covers all jurisdictions Google indexes (~100 countries). Requires GOOGLE_APPLICATION_CREDENTIALS env var. Best for global prior-art coverage.',
+      'Search the Google Patents public dataset via BigQuery. Covers all jurisdictions Google indexes (~100 countries, including the US). Requires GOOGLE_APPLICATION_CREDENTIALS env var. Best single source for patent prior-art across jurisdictions.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -92,7 +85,7 @@ const TOOL_DEFS = [
   {
     name: 'search_prior_art_all',
     description:
-      'Run the query against all four configured sources in parallel and return merged results. Use this for the Novelty Gate or any single-call broad prior-art sweep. Per-source failures are logged to stderr and skipped (the call still returns whatever the surviving sources produced).',
+      'Run the query against all three configured sources in parallel and return merged results. Use this for the Novelty Gate or any single-call broad prior-art sweep. Per-source failures are logged to stderr and skipped (the call still returns whatever the surviving sources produced).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -119,9 +112,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
   let results: PriorArtResult[] = [];
 
   try {
-    if (name === 'search_patentsview') {
-      results = await searchPatentsview(opts);
-    } else if (name === 'search_google_patents') {
+    if (name === 'search_google_patents') {
       results = await searchGooglePatents(opts);
     } else if (name === 'search_arxiv') {
       results = await searchArxiv(opts);
@@ -129,14 +120,13 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       results = await searchSemanticScholar(opts);
     } else if (name === 'search_prior_art_all') {
       const settled = await Promise.allSettled([
-        searchPatentsview(opts),
         searchGooglePatents(opts),
         searchArxiv(opts),
         searchSemanticScholar(opts),
       ]);
       settled.forEach((s, i) => {
         if (s.status === 'rejected') {
-          const sourceName = ['patentsview', 'google-patents', 'arxiv', 'semantic-scholar'][i];
+          const sourceName = ['google-patents', 'arxiv', 'semantic-scholar'][i];
           console.error(`[${sourceName}] failed: ${s.reason?.message ?? s.reason}`);
         }
       });

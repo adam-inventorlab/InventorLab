@@ -6,13 +6,18 @@ An MCP server that exposes prior-art search tools to Claude Code. Used by the In
 
 | Tool | Source | Auth | Coverage |
 |---|---|---|---|
-| `search_patentsview` | USPTO PatentsView 2.0 | none | US-granted patents |
-| `search_google_patents` | Google Patents BigQuery | GCP service account | ~100 jurisdictions, full-text |
+| `search_google_patents` | Google Patents BigQuery | GCP service account | ~100 jurisdictions, full-text, includes the US |
 | `search_arxiv` | arXiv | none | Preprints (CS, math, physics, stats) |
 | `search_semantic_scholar` | Semantic Scholar | optional API key | Peer-reviewed papers, citation counts |
 | `search_prior_art_all` | parallel fan-out | union of above | Single-call broad sweep |
 
 All tools accept `{ query, limit?, quality? }`. `quality: "fast"` returns ~5 results (the Novelty Gate's default during ambient operation); `quality: "thorough"` returns ~25 (for explicit `/prior-art` sessions).
+
+## Why no US-specific source
+
+USPTO PatentsView (`search.patentsview.org`) was retired in 2025. Its replacement is the USPTO Open Data Portal (ODP) at `api.uspto.gov`, which is free for any use including commercial — but it requires every user of the plugin to register for and manage their own USPTO API key. We considered shipping ODP as a fourth source and decided against it: Google Patents BigQuery already indexes the entire USPTO grant feed, so the corpus overlap is near-complete. ODP would add per-user credential friction without meaningfully expanding coverage. If freshness on patents granted within the last 1-3 weeks ever becomes important (Google Patents typically has a 1-3 week ingestion lag), ODP can be added as a fourth source without touching the others.
+
+We also looked at Lens.org, which has the most ergonomic API in the space. Lens's commercial-use terms require every commercial user to purchase a Professional Workspace license, which conflicts with the InventorLab thesis that solo developers and small teams should have low-friction access to defensible IP capture. So Lens is also out.
 
 ## Setup
 
@@ -32,7 +37,7 @@ npm run build
 
 ## Wiring into the InventorLab plugin
 
-Add to the plugin's MCP config (path depends on Claude Code plugin manifest conventions):
+Add to the plugin's MCP config:
 
 ```json
 {
@@ -55,16 +60,25 @@ Results are cached at `~/.inventorlab/mcp-cache/<sha256>.json` for 24 hours. The
 
 To clear: `rm -rf ~/.inventorlab/mcp-cache`.
 
+## Smoke testing
+
+A standalone script verifies each source independently:
+
+```sh
+USPTO_API_KEY=... SEMANTIC_SCHOLAR_API_KEY=... node smoke-test.mjs
+```
+
+(USPTO_API_KEY isn't used, but the script ignores unknown env vars.) Each source reports per-call status, latency, and the first few results. Useful for verifying credentials and diagnosing per-source failures.
+
 ## Coverage notes
 
-- **PatentsView**: US-granted patents. Does not cover US applications (only granted patents are in the dataset).
-- **Google Patents BigQuery**: covers applications and grants across most jurisdictions Google indexes. Includes machine-translated abstracts for non-English filings. Filing-date filtering is on the local jurisdiction's filing date.
-- **arXiv**: preprints only; no peer review. CS papers concentrate in cs.* categories.
-- **Semantic Scholar**: peer-reviewed and some preprint coverage; citation counts are the strongest unique signal.
+- **Google Patents BigQuery**: covers applications and grants across most jurisdictions Google indexes, including the US. Includes machine-translated abstracts for non-English filings. Filing-date filtering is on the local jurisdiction's filing date.
+- **arXiv**: preprints only; no peer review. CS papers concentrate in `cs.*` categories. API is slow (~10-20s per query); cache helps a lot for repeated Novelty Gate runs in the same session.
+- **Semantic Scholar**: peer-reviewed and some preprint coverage; citation counts are the strongest unique signal. Anonymous rate limit is aggressive (100 req / 5 min); for real use, get the free API key.
 
 ## Roadmap
 
+- USPTO Open Data Portal (ODP) — fourth source, gated on whether freshness on recent US patents becomes a practical issue.
 - EPO Open Patent Services (OPS) — adds EP-specific search and family expansion.
 - WIPO PATENTSCOPE — adds PCT applications, which often surface in international searches.
-- Lens.org — combines patents + scholarly literature with a single API call.
 - Citation-graph expansion — given a hit, retrieve papers/patents that cite it and that it cites, both directions, to find adjacent prior art the keyword search missed.

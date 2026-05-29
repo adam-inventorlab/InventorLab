@@ -2,7 +2,6 @@
 // shape regardless of which source produced them.
 
 export type PriorArtSource =
-  | 'patentsview'
   | 'google-patents'
   | 'arxiv'
   | 'semantic-scholar';
