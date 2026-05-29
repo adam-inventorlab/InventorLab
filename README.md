@@ -17,6 +17,32 @@ InventorLab is a [Claude Code](https://claude.com/claude-code) plugin. Install i
 
 Then run `/inventorlab-setup` in your project to configure CLAUDE.md and enable IP tracking.
 
+## Updating
+
+InventorLab uses Claude Code's built-in plugin update mechanism — there is no separate "InventorLab updater." Three ways to receive new versions:
+
+**Manual update.** Refresh the marketplace catalog and apply any available update:
+
+```
+/plugin marketplace update inventorlab
+/reload-plugins
+```
+
+If a newer InventorLab version is on GitHub, your installed copy moves to it. `/reload-plugins` activates the new version without restarting Claude Code.
+
+**Automatic updates.** Claude Code can refresh the marketplace and update InventorLab at session startup. Third-party marketplaces (including InventorLab) default to *auto-update off*, so you opt in once:
+
+1. Run `/plugin`
+2. Go to the **Marketplaces** tab
+3. Select **inventorlab**
+4. Choose **Enable auto-update**
+
+After that, each new Claude Code session checks for updates. When one is applied, Claude Code prompts you to run `/reload-plugins` to activate it.
+
+**For teams** — administrators can set `"autoUpdate": true` on the InventorLab entry in `extraKnownMarketplaces` (managed `settings.json`) to force auto-update for everyone without per-user opt-in.
+
+**Recommendation.** Auto-update is convenient and keeps you on the latest Novelty Gate, prior-art tooling, and skill prompts. The trade-off is that every push to InventorLab's `main` branch reaches your session at the next startup. If you prefer to control when changes land — for example because you depend on stable Novelty Gate behavior in a regulated workflow — leave auto-update off and update manually after reviewing the [release tags](https://github.com/adam-inventorlab/InventorLab/tags).
+
 ## What It Does
 
 ### It watches while you work
