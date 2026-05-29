@@ -33,6 +33,10 @@ ${GRAY}                     ${DIM}Usage: /invention-check full${RESET}
 ${GRAY}                            ${DIM}/invention-check recent${RESET}
 ${GRAY}                            ${DIM}/invention-check lib/cache/${RESET}
 
+${GREEN}    /novelty-check${RESET}   ${DIM}Quick novelty check on a hunch — surfaces results either way${RESET}
+${GRAY}                     ${DIM}Usage: /novelty-check "[your idea]"${RESET}
+${GRAY}                            ${DIM}/novelty-check src/cache/prefetch.js${RESET}
+
 ${GREEN}    /ideation-session${RESET} ${DIM}Divergent brainstorming — explore what could be built${RESET}
 ${GRAY}                     ${DIM}Usage: /ideation-session adaptive rate limiting${RESET}
 ${GRAY}                     ${DIM}Adheres to USPTO AI-assisted invention guidance${RESET}

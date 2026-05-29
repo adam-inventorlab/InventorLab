@@ -36,6 +36,7 @@ try {
     '',
     'Then mention the main commands available:',
     '  /invention-check     scan code for novel, potentially patentable IP',
+    '  /novelty-check       quick novelty check on a hunch — results either way',
     '  /disclosure-session  articulate and formalize an existing invention',
     '  /ideation-session    divergent brainstorming of new approaches',
     '  /patent-draft        draft a provisional patent application',

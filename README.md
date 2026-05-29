@@ -123,6 +123,12 @@ After that, each new Claude Code session checks for updates. When one is applied
 **Invention Radar** (always-on, no invocation needed) — Monitors your code as you write it. When you build something that looks even slightly novel, it silently drafts claims from multiple angles, runs a prior art search, and only flags it to you if it survives. You never see the false positives.
 - **When it activates:** Automatically, during normal development. The sensitivity level (1-10, set during setup) controls how aggressively it searches.
 
+**`/novelty-check [idea, file, or entry number]`** — Explicit novelty check, with full disclosure
+- `/novelty-check using a typed graph as both retrieval substrate and memory` — check a free-text idea
+- `/novelty-check src/cache/prefetch.js` — check what's in a file
+- `/novelty-check 7` — check IP Tracker entry #7
+- **When to use:** When you have a hunch something might be novel and want a structured check, on demand. Runs the same drafting + hybrid search + amendment pass as the Novelty Gate, but **always surfaces results — including failures**. Where the silent Gate filters out non-novel candidates before you see them, `/novelty-check` tells you what you found regardless of outcome (survived, failed, mixed) and cites the closest prior art so you can verify directly.
+
 ### Exploration
 
 **`/ideation-session [topic or problem]`** — Divergent brainstorming
