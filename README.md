@@ -197,6 +197,11 @@ After that, each new Claude Code session checks for updates. When one is applied
 **`/inventorlab-setup`** — Configure InventorLab for a new project
 - **When to use:** Once, at the start of a project. Sets sensitivity level, output goals, creates working documents (IP Tracker, Claim Strategy Notebook, Prior Art Registry, Portfolio). Explains the invention boundary and USPTO compliance.
 
+### Reference
+
+**`/inventorlab-skills`** — List every InventorLab skill, grouped by category
+- **When to use:** When you can't remember a command, when you want to see the full toolset at a glance, or when onboarding a collaborator who just installed the plugin. Cheap to run, no side effects.
+
 ## What makes InventorLab different
 
 ### The Novelty Gate

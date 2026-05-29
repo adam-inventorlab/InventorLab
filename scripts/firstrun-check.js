@@ -45,6 +45,7 @@ try {
     '  /prior-art           search for prior art on a tracked invention',
     '  /portfolio           view all IP documents and their status',
     '  /whitepaper          generate a technical whitepaper',
+    '  /inventorlab-skills  list every skill with usage and guidance',
     '',
     'Keep it concise and friendly. Surface this once; do not repeat it.'
   ].join('\n');

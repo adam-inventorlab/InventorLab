@@ -66,6 +66,9 @@ ${GRAY}                     ${DIM}Usage: /whitepaper${RESET}
 ${GREEN}    /portfolio${RESET}       ${DIM}View and manage your full IP document portfolio${RESET}
 ${GRAY}                     ${DIM}Usage: /portfolio${RESET}
 
+${GREEN}    /inventorlab-skills${RESET} ${DIM}List every InventorLab skill with usage and guidance${RESET}
+${GRAY}                     ${DIM}Usage: /inventorlab-skills${RESET}
+
 ${YELLOW}${BOLD}    Always active:${RESET}
 
 ${CYAN}    Invention Radar${RESET} ${DIM}Background monitoring for novel IP as you code${RESET}
