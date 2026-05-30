@@ -173,6 +173,19 @@ Inventions and novel approaches identified in this project.
 <!-- Entries will be added here by InventorLab -->
 ```
 
+7b. **Create IDEAS.md** — if it doesn't exist, create it with a starter template:
+```markdown
+# Ideas — InventorLab Idea Buffer
+
+Lab-notebook-style proto-tracker. Where IP-TRACKER.md holds inventions that have survived the Novelty Gate, this file holds conversational signals that *might* be inventive but aren't yet ready to be tracked candidates — typically because they exist only in dialog and have no code artifact yet.
+
+Multi-prompt inventions are the gap the artifact-first discovery loop leaves open. Append entries as ideas surface; run `/invention-synthesis` periodically to find threads forming across entries and promote them to IP-TRACKER.md when they survive the Gate. Entries here are permanent — even failed-Gate ideas stay (annotated) as a record of how thinking developed.
+
+---
+
+<!-- Entries will be added here by InventorLab -->
+```
+
 8. **Create CLAIM-STRATEGY-NOTEBOOK.md** — if it doesn't exist, copy from the template. This is a working document where you (Claude Code) develop claim strategies during disclosure and ideation sessions. The user doesn't need to manage it — you maintain it actively.
 
 9. **Create PRIOR-ART.md** — if it doesn't exist, create it from the template at `prior-art-template.md`. This is a structured registry of prior art findings organized by IP Tracker entry. You maintain it during prior art searches — every search result goes here with source, overlap, distinction, and threat level.
@@ -190,6 +203,7 @@ InventorLab configured for this project:
   ✓ patent-applications/figures/ directory created
   ✓ whitepapers/ directory created
   ✓ IP-TRACKER.md created
+  ✓ IDEAS.md created (Idea Buffer for conversational inventions)
   ✓ CLAIM-STRATEGY-NOTEBOOK.md created
   ✓ PRIOR-ART.md created
   ✓ PORTFOLIO.json created
@@ -200,6 +214,8 @@ Output goals: [user's stated goals]
 
 Available skills:
   /invention-check — scan code for novel approaches
+  /novelty-check — quick novelty check on a hunch — results either way
+  /invention-synthesis — find multi-prompt inventions in the Idea Buffer
   /disclosure-session — articulate and formalize an invention
   /disclosure-form — create an Invention Disclosure Form
   /ideation-session — brainstorm novel approaches

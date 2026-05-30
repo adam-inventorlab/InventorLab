@@ -245,6 +245,36 @@ If the user's work contains multiple potentially novel aspects, do NOT bundle th
 
 One concept may pass while another fails. One may be novel at a broad scope while another only survives narrowly. They deserve separate IP Tracker entries, separate PRIOR-ART.md sections, and separate claim strategies. Even if they exist in the same code or the same system, they are distinct inventions with distinct prior art landscapes.
 
+### Conversation-only inventions (Idea Buffer)
+
+The Novelty Gate as described above is artifact-driven — it assumes the candidate invention is visible in code or files. That covers most cases but leaves a real gap: **some inventions form in dialog before any implementation.** A system architecture sketched across several prompts. A protocol refined through conversation. A research methodology described verbally over multiple sessions. The artifact-first discovery loop has nothing to scan for these.
+
+When you notice an inventive signal that fits the triggers above but has **no code artifact behind it yet** — the user described something interesting; you haven't been asked to implement it; nothing has been written — do NOT run the full Novelty Gate. The Gate needs a stable candidate; an idea still forming in conversation often doesn't have one.
+
+Instead, **append a short entry to `IDEAS.md`** (the Idea Buffer — a proto-tracker alongside IP-TRACKER.md). Format:
+
+```markdown
+## YYYY-MM-DD · short-slugged-idea-title
+
+**Tags**: #topic-1 #topic-2
+**Status**: open
+
+2–4 sentences. What came up in conversation. What's potentially inventive about it. Any specific framing the user used. Related entries (link by date heading).
+```
+
+Low bar for adding. The cost is a few lines in a file; the cost of *not* capturing a multi-prompt invention is potentially losing the IP entirely when the thread vanishes from conversation memory.
+
+When to choose IDEAS.md vs. IP-TRACKER.md:
+
+- **No code yet, idea is forming in dialog** → IDEAS.md (low bar, fast)
+- **Single inventive moment is observable in code right now** → IP-TRACKER.md (via the standard Novelty Gate flow above)
+- **Multi-prompt thread is converging on something concrete** → IDEAS.md initially, then `/invention-synthesis` to find the thread, then promote to IP-TRACKER.md if it survives the Gate
+- **Conversational idea suddenly gets implemented** → both: the IDEAS.md entry stays (as a record of formation), and the now-implemented invention runs through the standard Gate and lands in IP-TRACKER.md with a Provenance note pointing at the buffer entries
+
+When you've added 3+ entries to IDEAS.md since the last synthesis pass, or when a session winds down after touching multiple related ideas in dialog, gently surface `/invention-synthesis` to the user: *"I've added a few entries to the Idea Buffer this session — want to run `/invention-synthesis` to see if any of those threads are coalescing?"*
+
+**The Intellectual Firewall and the Invention Boundary apply to IDEAS.md too.** Buffer entries should describe what the *user* has been developing, not introduce new inventive content. If you find yourself drafting an entry that extends past what the user said into territory you'd be inventing, stop — that's origination, not radar.
+
 ### Step 6: Flag (only if the gate passed)
 
 Be conversational, not procedural. These should feel like a colleague tapping you on the shoulder.

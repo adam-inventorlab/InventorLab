@@ -53,6 +53,7 @@ try {
     'Then mention the main skills available:',
     '  invention-check      scan code for novel, potentially patentable IP',
     '  novelty-check        quick novelty check on a hunch — results either way',
+    '  invention-synthesis  find multi-prompt inventions in the Idea Buffer',
     '  disclosure-session   articulate and formalize an existing invention',
     '  ideation-session     divergent brainstorming of new approaches',
     '  patent-draft         draft a provisional patent application',

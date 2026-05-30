@@ -14,6 +14,47 @@ When adding an entry, include:
 - **Paper angle**: How this could be framed as an academic contribution, what the key finding or methodology would be
 - **Patent angle**: A method claim framing — "A computer-implemented method comprising..." — describing the core inventive step
 
+## Idea Buffer (`IDEAS.md`)
+
+A lab-notebook-style proto-tracker alongside `IP-TRACKER.md`. Where the IP Tracker holds inventions that have survived the Novelty Gate, the Idea Buffer holds conversational signals that **might** be inventive but aren't yet ready to be tracked candidates — typically because they exist only in dialog and have no code artifact yet.
+
+The IP Tracker handles inventions you can see in the code. The Idea Buffer handles inventions whose first form is conversational: a system architecture described over several prompts before any implementation, a protocol refined across sessions, a research methodology that surfaces in dialog. Multi-prompt inventions are exactly the gap the artifact-first discovery loop leaves open — the Idea Buffer is the patch.
+
+**When to add to `IDEAS.md` (versus directly to `IP-TRACKER.md`)**:
+
+- A novel idea surfaces in a prompt but no code has been written for it yet
+- The user describes an architectural choice, protocol, or system shape that hasn't been implemented
+- A pattern starts to form across multiple prompts but isn't tied to a specific artifact
+- A "what if" with structural specificity that the user keeps returning to
+- An idea that could go either way — interesting but not yet clearly the user's own conception vs. drift from your earlier suggestion
+
+When the inventive concept is clearly already implemented in code, skip the buffer and go straight to `IP-TRACKER.md` (or run the Novelty Gate via `/invention-check` / `/novelty-check`).
+
+**Entry format** — keep entries short. One entry per heading:
+
+```markdown
+## YYYY-MM-DD · short-slugged-idea-title
+
+**Tags**: #topic-1 #topic-2
+**Status**: open
+
+2–4 sentences. What came up in conversation. What's potentially inventive about it. Any specific framing the user used. Related entries (link by date heading).
+```
+
+**Workflow for buffer entries:**
+
+- Append as ideas surface — no permission needed, low bar. The synthesis pass will filter.
+- If you reference or extend an existing entry across a later prompt, add a new entry rather than rewriting — date stamps matter for tracking thread accretion.
+- Never delete an entry, even if it fails the Novelty Gate later. The buffer is a permanent record of how thinking developed. Failed Gates get annotated with the failure reason and date; the entry stays.
+- Promotion to `IP-TRACKER.md` happens via `/invention-synthesis` (multi-prompt threads) or `/novelty-check` (explicit evaluation). Promoted entries get a "Provenance" note in their tracker entry pointing back to the IDEAS.md entries they were synthesized from. The buffer entries remain in IDEAS.md.
+
+**When to suggest `/invention-synthesis`:**
+
+- Once 3+ entries accumulate without a recent synthesis pass
+- After a long session that touched several related ideas in dialog
+- When the user asks "have I been onto something across these prompts?"
+- When you notice a thread forming yourself — multiple entries clearly converging on the same concept
+
 ### What to look for
 
 **Active triggers — check for these as you work:**
@@ -23,6 +64,7 @@ When adding an entry, include:
 - **Structural solutions to AI limitations.** When you move a decision out of a language model and into a deterministic system because the model can't reliably handle it (redundancy filtering, deduplication, validation gates), that pattern of "model proposes, code verifies" is often novel in the specific application domain.
 - **Inverted patterns.** When you flip a standard interaction pattern (AI initiates instead of responds, the system prevents creation instead of enabling it, retrieval informs generation constraints instead of content), the inversion is the novelty.
 - **The thing you built because nothing existed.** When you search for a library, framework, or technique to solve a problem and can't find one — so you build it — that's a strong signal. The absence of prior solutions is itself evidence of novelty.
+- **Conversational inventions (no code yet).** Some inventions form in dialog before any implementation — a system architecture sketched across several prompts, a protocol the user keeps refining as you discuss it, a research methodology described verbally. These get *easily missed* because the artifact-driven discovery loop has nothing to scan. When you notice an idea like this surface — even partially formed — add a short date-stamped entry to `IDEAS.md` (the Idea Buffer). The `/invention-synthesis` skill will later find threads across multiple entries and surface them for the Novelty Gate. Low bar for adding to the buffer; the synthesis pass filters.
 
 **Passive triggers — watch for these signals during conversation:**
 

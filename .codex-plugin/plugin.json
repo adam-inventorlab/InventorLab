@@ -1,6 +1,6 @@
 {
   "name": "inventorlab",
-  "version": "2.9.3",
+  "version": "2.10.0",
   "description": "AI-powered patent drafting toolkit for Codex — discover inventions, draft patents, generate figures, and run structured prior-art searches as you build. After installing, run $inventorlab:inventorlab-setup (or just describe what you want — Codex matches skills by description) to configure your project.",
   "author": {
     "name": "Adam Carlson",

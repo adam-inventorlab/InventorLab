@@ -37,6 +37,10 @@ ${GREEN}    /novelty-check${RESET}   ${DIM}Quick novelty check on a hunch — su
 ${GRAY}                     ${DIM}Usage: /novelty-check "[your idea]"${RESET}
 ${GRAY}                            ${DIM}/novelty-check src/cache/prefetch.js${RESET}
 
+${GREEN}    /invention-synthesis${RESET} ${DIM}Find multi-prompt inventions in the Idea Buffer${RESET}
+${GRAY}                     ${DIM}Reviews IDEAS.md + recent activity for cross-prompt${RESET}
+${GRAY}                     ${DIM}threads that haven't crystallized into tracked candidates${RESET}
+
 ${GREEN}    /ideation-session${RESET} ${DIM}Divergent brainstorming — explore what could be built${RESET}
 ${GRAY}                     ${DIM}Usage: /ideation-session adaptive rate limiting${RESET}
 ${GRAY}                     ${DIM}Adheres to USPTO AI-assisted invention guidance${RESET}

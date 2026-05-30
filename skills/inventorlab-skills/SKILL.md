@@ -64,6 +64,16 @@ Invention Radar (always-on, no invocation)
     /novelty-check path/to/file.js
     /novelty-check 7              — IP Tracker entry number
 
+`/invention-synthesis`
+  Find multi-prompt inventions. Reads the Idea Buffer (IDEAS.md)
+  and recent activity for ideas that have been forming across
+  several prompts or sessions but haven't crystallized into a
+  tracked candidate yet — typically conversational inventions
+  (system architectures, protocols, research methodologies)
+  whose first form is dialog, not code. Clusters related entries
+  into threads, synthesizes what each is converging on, and
+  surfaces the strongest candidates for the Novelty Gate.
+
 ## Exploration
 
 `/ideation-session [topic or problem]`
@@ -145,6 +155,10 @@ You don't need to manage them — they grow as inventions develop:
 
   IP-TRACKER.md                 — accumulating tracker of inventions
                                   that have survived the Novelty Gate
+  IDEAS.md                      — Idea Buffer: proto-tracker for
+                                  conversational inventions that
+                                  haven't crystallized yet (multi-
+                                  prompt threads land here first)
   CLAIM-STRATEGY-NOTEBOOK.md    — per-invention claim strategies,
                                   scope explorations, drafting notes
   PRIOR-ART.md                  — structured registry of prior-art
