@@ -168,65 +168,185 @@ Focus on:
 - **Open source projects** — code that implements similar approaches. Web search plus targeted `site:github.com` queries
 - **Conference talks and slides** — often surface only via web search, but are valid prior art if publicly accessible
 
-### 5. Analyze findings
+**This is Phase 1 — claim-driven search.** After it completes, triage: did any single reference anticipate any framing? If yes, that framing is dead under §102 and goes directly to the amendment pass (Step 6). If no, the §102 question is resolved for that framing (presumptively novel) and the real question becomes §103 obviousness — which is where Phase 2 earns its keep.
 
-**Anticipation analysis (35 U.S.C. 102):** For each reference, check whether it teaches ALL elements of any draft claim. A single reference that covers every limitation of a claim anticipates it — the claim is not novel.
+#### Phase 2 — Examiner-style combination hunting (selective)
 
-For each significant piece of prior art found, document:
+Phase 1 finds references that share vocabulary with the claim. Phase 2 finds references that an examiner would use to construct an obviousness argument, even when those references use vocabulary the inventor would never have searched for. The two phases find different prior art, and the prior art Phase 2 surfaces is exactly the kind that ambushes claims during prosecution.
 
-- **Title and source** — full citation
-- **Date** — when it was published (critical for priority)
-- **Relevance** — what aspect of the invention it relates to
-- **Claim elements covered** — which specific elements from the draft claims does this reference teach?
-- **Claim elements NOT covered** — which elements are absent? These are the potential distinguishing features
-- **Distinction** — how the invention differs from this prior art
+**Trigger.** Run Phase 2 for any framing where Phase 1 found NO anticipating reference but the broadest framing is plausibly obvious under at least one KSR rationale (Step 5, Pillar 2). For framings where Phase 1 already found anticipation, skip Phase 2 — the framing is going to the amendment pass anyway.
 
-**Obviousness analysis (35 U.S.C. 103):** After individual analysis, check whether any COMBINATION of 2-3 references collectively covers all claim elements. For each potential combination:
+**Procedure.** For each Phase-2-triggered framing:
 
-- **References**: [Ref A] + [Ref B] (+ [Ref C] if needed)
-- **Coverage**: Together, do they teach all elements of any draft claim?
-- **Motivation to combine**: Would a person of ordinary skill have reason to combine these references? Is there a teaching, suggestion, or motivation in any of them pointing toward the combination?
-- **Reasonable expectation of success**: Would combining these references predictably produce the claimed invention?
-- **Teaching away**: Does any reference teach AWAY from the combination — discouraging or contradicting it?
-- **Unexpected results**: Does the invention's combination produce results qualitatively different from what the individual references would predict?
-- **Mechanism of combination**: HOW would a skilled person combine these references? Be specific — "modify Reference A's [component] by replacing [element X] with Reference B's [element Y]." If you can't articulate a concrete modification path, the combination may not be obvious. Vague assertions that references "could be combined" are insufficient — the modification must be specific and credible.
-- **The combination as a whole**: Step back and evaluate the entire combined system, not just the individual pieces. Does the combination, taken as a whole, look different from what any single reference teaches? Sometimes individual elements are known but the overall system they create is qualitatively different — greater than the sum of its parts. Consider the invention's architecture, interaction patterns, and emergent properties that arise from the specific way elements are integrated.
-- **Obviousness verdict**: Obvious (clear motivation + specific modification path + predictable whole) / Non-obvious (no motivation, no clear modification path, teaching away, unexpected results, or the whole is qualitatively different) / Arguable
+1. **Articulate the hypothetical primary reference.** Ask the adversarial question: *if PHOSITA were to construct an obviousness rejection against this framing, what would the dominant primary reference need to teach?* List the elements of the framing the hypothetical primary would cover (typically the largest portion — the secondary references fill the gaps). Predict the vocabulary it would use, which may differ from the inventor's. Predict the venue: which CPC/IPC classification region, which academic journal, which industry blog domain.
 
-**Threat level** — considering both anticipation and obviousness:
-  - **High (anticipation)**: A single reference teaches the core claimed combination; the claim is anticipated
-  - **High (obviousness)**: Multiple references obviously combine to cover the claim; clear motivation to combine
-  - **Medium**: References cover components but the combination is arguably non-obvious; claims need careful distinguishing language
-  - **Low**: Tangentially related; worth noting but doesn't threaten claims under either 102 or 103
+2. **Search for the hypothetical primary.** Use the hybrid tools with the predicted vocabulary, targeted at the predicted venues. This is one targeted search per framing, not a full sweep. Use both structured tools (especially `search_google_patents` with `yearFrom` and CPC-region filtering if known) and `WebSearch` (especially `site:` qualifiers for predicted domains).
 
-### 6. Generate amendments to distinguish over close prior art
+3. **For each hypothetical primary that surfaces, identify the gap.** Element by element: what does the primary teach? What doesn't it teach? The unteached elements are the secondary-reference targets.
 
-When the analysis identifies high or medium-threat references, the response is **not** to kill the threatened framing. The response is to draft amendments that distinguish the claim over the reference and see whether the amended claim still captures something genuinely novel.
+4. **Search for gap-fillers.** Predicted vocabulary, predicted venues. One targeted search per gap, structured plus web. Two or three gap-filler candidates per primary is normal.
 
-This serves two purposes:
+5. **Cross-modality combinations are legally valid and should be actively considered.** PHOSITA is presumed to read across patents, peer-reviewed academic literature, and major technical blogs and conference proceedings. A primary reference from Google Patents combined with a secondary reference from arXiv is a fair combination if PHOSITA would consult both. **Do not artificially silo combinations by source — the inventive landscape does not.** When merging the references found in Phase 2 with those from Phase 1, treat the merged set as one corpus for combination analysis.
 
-1. **Diagnostic.** The amendment that's required to distinguish tells you exactly where the actual novelty lives. If you have to add "wherein the data store is reflexively constructed by the same agent that reads it" to overcome a reference, the reflexivity is the inventive step. The amendment is a finger pointing at the load-bearing limitation.
-2. **Recovery.** The amended claim — narrower than the original but distinguishing over the prior art — is a candidate dependent claim or even a revised independent. Prior art that would have killed the original framing now bounds the claim from below, not extinguishes it.
+The hunt is also done in reverse when warranted: sometimes the most defensible obviousness argument starts not from a primary reference but from a *secondary* reference that obviously implies modifying a known primary. If that reversed structure is more natural, hypothesize the secondary first and search for the primary it would obviously combine with.
 
-For each high or medium-threat reference:
+Phase 2's search effort is targeted, not exhaustive. On framings where it triggers, the additional search cost is roughly 1.3–1.5× Phase 1 alone — significantly less than a second full sweep. On framings where it does not trigger (Phase 1 already anticipates), the cost is zero.
 
-- **Identify what the reference teaches.** Be specific about which claim limitations it covers, element by element.
-- **Identify what the reference does NOT teach.** Compare against the invention as it actually exists. What is present in the invention that the reference doesn't have?
-- **Draft a narrowing amendment.** Add the missing limitation to the claim. The amendment phrasing should be:
-  - **Specific enough** that the limitation is observable in the invention but not in the reference.
-  - **General enough** that it captures the inventive principle, not just an incidental implementation choice.
-  - **Functional or structural** rather than purely lexical — "wherein the X is performed [how / by what mechanism]" rather than just renaming the same concept.
-- **Draft a pivoting amendment.** Instead of narrowing along the same dimension, restructure the claim to a different dimension (see Section 2). If the reference is killing the procedural framing, try amending to a structural framing that points at the same invention. The original scope is preserved but the claim character shifts. If the procedural pivot also gets caught, try the perspective pivot, the temporal-frame pivot, or the domain transposition.
-- **Verify the amendment.** Re-evaluate against the original reference: does the amended claim now distinguish? Then re-search against the new amendment language: does the amended claim survive a fresh prior-art sweep, or does the amendment language itself find new references?
-- **Record the amendment.** In the survivability matrix, each amended framing is a new entry. Note what the amendment cost in scope: the amendment narrowed the claim along one dimension to escape prior art on another, or pivoted to a different dimension and preserved scope.
+### 5. Analyze findings — the six-pillar obviousness framework
 
-**The amendment portfolio is informative even when filing is not the goal.** When the user is deciding whether to pursue patent protection, the amendment depth reveals the actual size and shape of the defensible IP:
+The analysis is grounded in three Supreme Court decisions governing §103 obviousness: *Graham v. John Deere* (1966) which established the factual inquiries and recognized "secondary considerations" as objective indicia of non-obviousness; *KSR v. Teleflex* (2007) which broadened the rationales for obviousness beyond TSM and required flexibility in the analysis; and the line of Federal Circuit cases requiring articulated reasoning with rational underpinnings — no conclusory rejection.
 
-- A claim that needs only a single small amendment to distinguish from existing prior art is defensible *and* broad — strong IP.
-- A claim that needs three or more significant amendments to distinguish is defensible but narrow — the IP is real but the moat is thin.
-- A claim that cannot be amended to distinguish without losing the inventive concept is not patentable — but the negative result is itself the right answer, and worth reporting cleanly.
+**Anticipation analysis (35 U.S.C. §102) — first pass.**
 
-Iterate steps 5 and 6 until the survivability matrix stabilizes — meaning every surviving framing has either been fully analyzed against the prior-art catalog or amended to the point where further amendment would dissolve the inventive concept. The stable matrix is what the report describes.
+For each reference, check whether it teaches ALL elements of any framing. A single reference covering every limitation anticipates. Per reference, document:
+
+- **Title, source, date, URL** — full citation
+- **Modality of source** — Google Patents / arXiv / Semantic Scholar / WebSearch / other
+- **Claim elements taught** — element by element, which limitations the reference covers
+- **Claim elements not taught** — which limitations are absent (these are the potential distinguishing features)
+- **Anticipation verdict** — ANTICIPATED / NOT ANTICIPATED / ARGUABLE
+
+If anticipated, the framing dies under §102 and goes to the amendment pass (Step 6). If not, proceed to §103.
+
+**Obviousness analysis (35 U.S.C. §103) — six pillars.**
+
+For each candidate combination of 2-3 references that collectively cover all claim elements — **including cross-modality combinations spanning Google Patents, arXiv, Semantic Scholar, and WebSearch results** — evaluate each pillar:
+
+#### Pillar 1 — PHOSITA
+
+Define the person of ordinary skill in the art (PHOSITA) for this technical field before evaluating anything else. PHOSITA calibrates the entire obviousness standard.
+
+- **Education level** and years of relevant experience
+- **Adjacent fields** PHOSITA is familiar with
+- **Literature PHOSITA is presumed to read** — typically patents in the classification region, peer-reviewed papers in the field, major technical blogs and conference proceedings, and (in fast-moving software fields) GitHub and the dominant open-source projects
+
+A combination obvious to a PhD-level cryptographer may be non-obvious to a CS undergrad. State PHOSITA explicitly — every pillar below depends on this definition.
+
+**PHOSITA reads across publication types.** A software PHOSITA reads patents AND papers AND major engineering blogs. This is why cross-modality combinations are within PHOSITA's reach and are legally valid combinations — a primary reference from Google Patents combined with a secondary from arXiv is a fair combination for PHOSITA to make.
+
+#### Pillar 2 — Rationale identification
+
+KSR held that TSM alone is insufficient. At least one of seven rationales must support the combination. State explicitly which apply:
+
+1. **TSM (teaching, suggestion, or motivation)** — does any reference teach, suggest, or motivate combining the others?
+2. **Combination of known elements** — combining known prior-art elements via known methods to yield predictable results
+3. **Substitution of known elements** — substituting one known element for another in the same role to yield predictable results
+4. **Application of known technique** — using a known technique to improve similar devices in the same way
+5. **Predictable use** — applying a known technique to a known device ready for improvement, yielding predictable results
+6. **"Obvious to try"** — selecting from a finite set of identified, predictable solutions
+7. **Design need or market pressure** — known design needs pushing toward predictable variations
+
+A single rationale is weaker than two or three rationales jointly supporting the combination. Document each that applies.
+
+#### Pillar 3 — Specific modification path
+
+Articulate the actual modification step by step. The modification must be concrete, articulable, and credible — *not* a vague assertion that "the references could be combined."
+
+Format: *"PHOSITA would modify [Reference A's component X] by [verb] [element Y] with [Reference B's element Z], producing [result]."*
+
+Name the combination type using the taxonomy:
+
+- **Substitution** — replace element X with element Y of the same role (most common)
+- **Integration** — combine A's components with B's components into a unified system
+- **Transformation** — apply A's process to B's data or domain (e.g., applying a method developed for image processing to audio data)
+- **Layering** — use A as a preprocessing or postprocessing layer for B
+- **Recombination** — use A's mechanism for a different purpose that B addresses
+
+Naming the combination type forces precision and makes the analysis reviewable. If no combination type fits, the modification path is probably not articulable — which itself is evidence against obviousness.
+
+#### Pillar 4 — Reasonable expectation of success
+
+Would PHOSITA reasonably expect the combination to predictably work? Mere possibility of success is insufficient. If the references suggest the combination is speculative, the inventive concept is exotic relative to PHOSITA's expectations, or the result has not been demonstrated to be predictable, expectation of success is weakened.
+
+#### Pillar 5 — Rebuttal evidence (intrinsic to the references)
+
+Examine the references themselves for arguments against obviousness:
+
+- **Teaching away** — does any reference discourage, contradict, or warn against the proposed combination? Strong rebuttal.
+- **Unexpected results** — does the combination produce results qualitatively different from what PHOSITA would predict (synergy, emergent behavior, counterintuitive outcomes)? Strong rebuttal.
+- **The whole vs. the parts** — does the combined system, taken as a whole, look qualitatively different from any individual reference? Greater-than-sum-of-parts is a recognized argument against obviousness.
+
+#### Pillar 6 — Secondary considerations (objective indicia, Graham factors)
+
+These are extrinsic to the references and can rebut even a persuasive obviousness case. They rarely apply at the candidate-invention stage, but when present they are decisive at prosecution. Note when present:
+
+- **Long-felt but unsolved need** — the field has wanted this solution for years without arriving at it
+- **Failure of others** — competitors tried and failed to achieve similar results
+- **Commercial success** — the invention generated market success traceable to the inventive features (not marketing or unrelated factors — the nexus matters)
+- **Industry praise** — peer recognition, awards, citations
+- **Copying** — competitors copied rather than designing around
+- **Initial skepticism** — experts initially doubted the approach
+- **Licensing** — others paid for rights, signaling industry respect
+
+**Obviousness verdict.** Combine the pillars:
+
+- **Obvious** — at least one KSR rationale, articulable modification path, reasonable expectation of success, no significant rebuttal, no significant secondary considerations
+- **Non-obvious** — no rationale survives, OR no articulable modification path, OR strong rebuttal evidence, OR strong secondary considerations
+- **Arguable** — partial support on multiple pillars; document the tension explicitly
+
+**Threat level** — combining §102 and §103 assessments:
+
+- **High (§102)** — single reference anticipates
+- **High (§103)** — clear KSR rationale, articulable modification path, no significant rebuttal
+- **Medium** — KSR rationale present but rebuttal or weak modification path keeps it arguable
+- **Low** — tangential; worth noting but not dispositive against any framing
+
+### 6. Amendment iteration — engineering survival, with adversarial review
+
+When the analysis identifies a high or medium-threat reference (anticipation under §102) or combination (obviousness under §103), the response is **not** to kill the framing immediately. The response is to iteratively engineer amendments that steer around the specific killing art, re-search the amended version to confirm it does not encounter NEW killing art, and adversarially evaluate the amendment itself for obviousness in light of the same art that killed the original.
+
+This iteration is what turns the framework from "evaluate prior art against the claim" into "engineer the broadest defensible claim against the prior art." The amendment loop is informative even when filing is not the goal — amendment depth reveals the actual size and shape of the defensible IP.
+
+For each high or medium-threat framing, run the loop below. The loop is an explicit cycle: Step 6a → 6b → 6c → return to 6a, up to the termination conditions in Step 6d.
+
+#### Step 6a — Articulate a targeted amendment
+
+The amendment must specifically steer around the killing reference or combination. Not generic narrowing — deliberate steering.
+
+- **Identify what the killing art teaches** (element by element, including which references in the killing combination teach which elements)
+- **Identify what it does NOT teach** that the invention actually has
+- **Draft a narrowing amendment** that adds the missing limitation. Phrasing constraints:
+  - *Specific enough* to be observable in the invention but not in the killing art
+  - *General enough* to capture the inventive principle, not an incidental implementation detail
+  - *Functional or structural*, not lexical — "wherein the X is performed by [mechanism]" rather than renaming the same concept
+- **Optionally draft a pivoting amendment** that restructures the framing to a different dimension from Step 2 (scope / feature emphasis / aspect / perspective / temporal frame / domain transposition). The original scope is preserved but the claim character shifts, potentially escaping the killing art entirely.
+
+#### Step 6b — Adversarial obviousness check on the amendment itself
+
+Wear the examiner hat AGAIN. Apply the six-pillar framework from Step 5 to the *amended* framing in light of the same killing art that motivated the amendment. Is the amendment itself obvious to PHOSITA, given the references already on the table?
+
+Common amendment failure modes (each maps to a KSR rationale):
+
+- **Substitution failure (Rationale 3)** — the amendment swaps in a known alternative. "Wherein the optimizer uses Adam instead of SGD" is obvious if the killing art teaches optimization.
+- **Known-technique failure (Rationale 4)** — the amendment applies a known technique to the same problem. "Wherein the cache uses LRU eviction" is obvious if the killing art teaches caching.
+- **"Obvious to try" failure (Rationale 6)** — the amendment picks one value from a small finite set. "Wherein the threshold is 0.5" is obvious if PHOSITA would pick from {0.3, 0.5, 0.7}.
+- **Design-need failure (Rationale 7)** — the amendment responds to a known design need. "Wherein the system is fault-tolerant" responds to a generic engineering need.
+
+If the amendment is itself obvious under any pillar, **the amendment is non-viable**. Try a different amendment direction (different missing limitation, or pivot to a different dimension). If no amendment direction articulably steers around the art without being obvious itself, exit the loop and DECLARE DEAD.
+
+#### Step 6c — Re-search the amended framing
+
+The amendment introduces new claim language with new search terms. Run Phase 1 (claim-driven) AND Phase 2 (examiner combination hunting, if triggered) against the amended version. The amended version must survive its own search — the amendment language may surface prior art the original search missed because the original framing did not use those terms.
+
+If the amended framing now encounters NEW killing art, return to Step 6a with the new killing art as the target. If it survives, record it in the survivability matrix at the amended scope and stop.
+
+#### Step 6d — Termination conditions
+
+Exit the loop at any of:
+
+- **Survives** → record as survivor at narrowed scope; stop
+- **No articulable amendment path** that steers around the killing art without being itself obvious → DECLARE DEAD
+- **Addition depth > 3 cumulative limitations across all iterations** → claim is too narrow to carry inventive value (any further narrowing dissolves the inventive concept); DECLARE DEAD
+- **Each candidate amendment direction dies in Step 6b** (each is itself obvious) → DECLARE DEAD
+
+#### What the amendment portfolio reveals about the IP
+
+Document every amendment attempt, surviving and not. The amendment depth diagnoses the IP shape:
+
+- **Survives with no amendment** → strong, broad IP
+- **Survives with one small narrowing** → strong, somewhat narrower IP
+- **Survives with two or three substantive amendments** → real but narrow IP; the moat is thin
+- **Dies at any termination condition** → not patentable as conceived. The failures themselves are diagnostic about where the inventive concept's center of gravity actually lies and where it shades into known territory. A clean "not patentable" answer with documented amendment attempts is often more useful than a marginal "barely defensible at extreme narrowing" answer.
 
 ### 7. Produce the prior art report
 

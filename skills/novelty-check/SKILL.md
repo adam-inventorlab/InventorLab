@@ -52,32 +52,57 @@ Draft 5-8 disposable claim framings of the input, varying along the same six dim
 
 Fewer framings than `/prior-art` (which uses 8-12) — this is a quicker check. But cover at least the scope dimension (broadest + mid + narrowest) and at least one domain transposition into an adjacent field. The transposition is the most common source of "I missed prior art because I didn't know the vocabulary they use" failures.
 
-### Step 3: Hybrid search
+### Step 3: Hybrid search — two phases
 
-Run prior-art queries via the same hybrid strategy as `/prior-art` step 4:
+**Phase 1: claim-driven search.** Run prior-art queries via the same hybrid strategy as `/prior-art`:
 
 - **`search_prior_art_all`** (MCP) — structured coverage of Google Patents BigQuery, arXiv, Semantic Scholar
 - **`WebSearch`** — broader coverage of blog posts, open-source projects (GitHub READMEs, code, project docs), conference talks, product launches, vendor docs
 
 Run both in parallel for each framing. Treat as complementary — the structured sources give authoritative patent/academic coverage; web search catches the broader technical literature. Merge results, deduplicate by URL or near-match title.
 
-### Step 4: Analyze findings
+**Triage.** For each framing: did any single reference anticipate? If yes, that framing is dead under §102 and goes to the amendment pass (Step 5). If no, the §102 question is resolved and the real question becomes §103 obviousness.
 
-For each draft claim framing, evaluate:
+**Phase 2: examiner-style combination hunting (selective).** For any framing where Phase 1 found no anticipation but the broadest framing is plausibly obvious under a KSR rationale, hypothesize what a *primary* reference would need to teach to plausibly support an obviousness rejection, search for it, then hypothesize and search for the gap-fillers. One targeted search per hypothesized reference, not a full sweep.
 
-- **Anticipation (35 U.S.C. 102)** — does any single reference teach ALL the framing's limitations?
-- **Obviousness (35 U.S.C. 103)** — would any combination of 2-3 references be obvious to combine, and collectively cover all limitations?
+Phase 2 finds prior art that the claim-driven search missed because the inventor's vocabulary differs from the prior-art community's. This is exactly the prior art that ambushes claims during prosecution. Cross-modality combinations are legally valid — PHOSITA reads patents AND academic literature AND major technical blogs, so a primary from Google Patents combined with a secondary from arXiv is fair game.
 
-Build a per-framing verdict: **SURVIVES**, **FAILS (anticipation)**, **FAILS (obviousness)**, or **MARGINAL (arguable)**.
+For `/novelty-check` specifically, keep Phase 2 light: one or two hypothesized primaries per framing, one or two gap-filler searches per primary. This is a quick check, not a deep search.
 
-### Step 5: Lightweight amendment pass
+### Step 4: Analyze findings — six-pillar obviousness framework (lightweight)
 
-For any framing that FAILS or is MARGINAL, draft ONE amendment that would distinguish over the closest reference. Two amendment types:
+For each candidate combination of 2-3 references (including cross-modality combinations spanning patent and academic and web sources), evaluate using a streamlined version of the six-pillar framework from `/prior-art` Step 5:
 
-- **Narrowing amendment** — add the missing limitation the reference lacks. Note what it costs in scope.
-- **Pivoting amendment** — restructure to a different dimension that escapes the reference. Note the new claim character.
+1. **PHOSITA** — define the person of ordinary skill for this technical field briefly. What literature do they read across patents, papers, and blogs?
+2. **Rationale identification** — at least one of seven KSR rationales must support the combination: TSM / combination of known elements / substitution / application of known technique / predictable use / "obvious to try" / design need.
+3. **Specific modification path** — articulate the modification step by step, using the combination taxonomy (substitution / integration / transformation / layering / recombination).
+4. **Reasonable expectation of success** — would PHOSITA predictably expect this to work?
+5. **Rebuttal evidence (intrinsic)** — teaching away, unexpected results, the whole vs. the parts.
+6. **Secondary considerations (Graham factors)** — *evaluate only if the user's input contains evidence of these (long-felt need, failure of others, commercial success, industry praise, copying, skepticism, licensing)*. Otherwise skip — these are evidentiary and rarely available at the candidate-invention stage.
 
-Do NOT run a full amendment iteration (that is `/prior-art` step 6's job, run to stabilization). For `/novelty-check`, one amendment per failing framing is enough — its job is diagnostic: what limitation, if any, would make this defensible? If the amendment requires dissolving the inventive concept itself, say so.
+Per-framing verdict: **SURVIVES**, **FAILS (anticipation)**, **FAILS (obviousness)**, or **MARGINAL (arguable)**.
+
+The lightweight version is faster than `/prior-art`'s full analysis because it skips the documentation-rich form of the verdict — but pillars 1–5 are applied to every candidate combination. Pillar 6 is only invoked when the input provides evidence.
+
+### Step 5: Lightweight amendment iteration
+
+For any framing that FAILS or is MARGINAL, run the amendment loop. `/novelty-check`'s version is lighter than `/prior-art`'s — **maximum 2 iterations**, not 3 — because this is a quick check, not an exhaustive prosecution-grade analysis. The loop still includes the adversarial check on the amendment itself.
+
+**For each failing framing, iterate up to 2 times:**
+
+1. **Articulate a targeted amendment** that steers around the specific killing reference or combination. Two types: narrowing (add the missing limitation) and pivoting (restructure to a different dimension). Not generic narrowing — deliberate steering.
+2. **Adversarial obviousness check on the amendment itself.** Wear the examiner hat: apply the six-pillar framework to the amendment+art combination. Is the amendment itself obvious under any of the seven KSR rationales? Common failure modes: substitution of known elements (Rationale 3), application of known technique (Rationale 4), "obvious to try" variation (Rationale 6), design-need response (Rationale 7).
+3. **Re-search the amended framing.** Run Phase 1 against the amended version (and Phase 2 if triggered). The amendment language may surface new prior art.
+
+**Termination conditions** (same as `/prior-art`, capped at 2 iterations for `/novelty-check`):
+
+- **Survives** → record as survivor at narrowed scope; stop
+- **No articulable amendment path** that steers around the killing art without being itself obvious → DECLARE DEAD
+- **Addition depth > 3 cumulative limitations** → claim is too narrow to carry inventive value; DECLARE DEAD
+- **Each candidate amendment dies in the adversarial check** (each is itself obvious) → DECLARE DEAD
+- **2 iterations completed without survival** → exit the loop; report as DEAD with the amendment attempts documented
+
+The amendment failures are themselves diagnostic — they reveal where the inventive concept's center of gravity lies and where it shades into known territory. Even when a framing dies, the documented amendment attempts tell the user something useful about the IP shape.
 
 ### Step 6: Report to the user (ALWAYS — including failures)
 

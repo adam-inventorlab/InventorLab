@@ -96,21 +96,49 @@ Search for each draft claim's key elements, both individually and in combination
 
 The draft claims make the search precise. Instead of searching for "cache prefetching," you search for "predicting next resource from access pattern AND loading into cache before request AND adapting prediction as pattern changes" — which is what the actual claim would cover.
 
-**Execute searches via two complementary modalities in parallel.** Use the bundled `search_prior_art_all` MCP tool for structured coverage of patents (Google Patents BigQuery, global), preprints (arXiv), and peer-reviewed papers with citation counts (Semantic Scholar). Use `WebSearch` in parallel for broader coverage of blog posts, open-source projects, GitHub READMEs, conference talks, product launches, vendor docs, and general technical literature that isn't indexed by the structured sources. Treat the two modalities as complementary — neither alone catches everything. Structured results carry typed metadata (classifications, dates, citation counts) that feeds directly into the obviousness analysis below; web results often surface exactly the non-traditional prior art the structured indexes miss and are often the most disqualifying when present. Merge findings, deduplicate by URL or near-match title, and use both in the survivability matrix.
+**Execute searches via two phases, both silent.**
 
-### Step 3: Obviousness analysis (user sees nothing)
+**Phase 1: claim-driven hybrid search.** Use the bundled `search_prior_art_all` MCP tool for structured coverage of patents (Google Patents BigQuery, global), preprints (arXiv), and peer-reviewed papers with citation counts (Semantic Scholar). Use `WebSearch` in parallel for broader coverage of blog posts, open-source projects, GitHub READMEs, conference talks, product launches, vendor docs. The two modalities are complementary — structured results carry typed metadata (classifications, dates, citation counts) that feeds the obviousness analysis below; web results often surface exactly the non-traditional prior art the structured indexes miss. Merge findings, deduplicate by URL or near-match title.
 
-If the full combination isn't found in a single reference (no anticipation), check for **obviousness** — could a person of ordinary skill combine existing references to arrive at the invention?
+**Triage.** For each framing: did any single reference anticipate? If yes, that framing is dead under §102 and goes to the silent amendment loop in Step 4. If no, proceed to Phase 2.
 
-For each pair of references that collectively cover the claim elements, ask:
-- **Motivation to combine**: Would a skilled person have reason to combine Reference X with Reference Y?
-- **Mechanism of combination**: HOW specifically would they combine them? "Modify A's [component] by replacing [X] with B's [Y]" — if you can't articulate a specific modification path, the combination may not be obvious
-- **Reasonable expectation of success**: Would the combination predictably work?
-- **Teaching away**: Does either reference teach AWAY from the combination?
-- **Unexpected results**: Does the combination produce qualitatively different results than predicted?
-- **The whole unit**: Does the combined system, taken as a whole, look different from any individual reference? Sometimes known parts create a qualitatively new whole
+**Phase 2: examiner-style combination hunting (selective, silent).** For each surviving framing, hypothesize what a primary reference would need to teach to plausibly support an obviousness rejection. Predict its vocabulary and venue. Search for it. For each found primary, hypothesize and search for the gap-fillers. One targeted search per hypothesized reference. Cross-modality combinations are legally valid — PHOSITA reads across patents, academic literature, and major technical blogs, so a primary from Google Patents combined with a secondary from arXiv is fair game.
 
-If the combination is obvious (clear motivation + specific modification path + predictable whole), treat it the same as anticipation. If the whole is greater than the sum of parts, or there's no clear modification path, the invention may still be non-obvious despite individual elements being known.
+The two-phase search runs silently. The inventor sees none of this. The combined cost (Phase 1 + Phase 2 when triggered) is roughly 1.3–1.5× a Phase 1 sweep alone — well within the ambient flow-preservation budget because the AI absorbs the cost, not the inventor.
+
+### Step 3: Obviousness analysis — six-pillar framework (user sees nothing)
+
+If Phase 1 found no anticipating reference, the §102 question is resolved (presumptively novel). The real question becomes §103 obviousness. For each candidate combination of 2-3 references (**including cross-modality combinations spanning Google Patents, arXiv, Semantic Scholar, and WebSearch results**), evaluate using the six-pillar framework:
+
+1. **PHOSITA** — define person of ordinary skill in this technical field briefly. PHOSITA reads across patents, peer-reviewed literature, and major technical blogs in the field. Cross-modality combinations are within reach.
+2. **Rationale identification** — at least one of seven KSR rationales must support the combination: TSM / combination of known elements / substitution / application of known technique / predictable use / "obvious to try" / design need.
+3. **Specific modification path** — articulate the modification step by step using the combination taxonomy: substitution / integration / transformation / layering / recombination. Vague combinability is insufficient.
+4. **Reasonable expectation of success** — would PHOSITA predictably expect the combination to work?
+5. **Rebuttal evidence** — teaching away, unexpected results, the whole as qualitatively different from the parts.
+
+**Pillar 6 (secondary considerations / Graham factors) is skipped at the ambient Gate stage** — these are evidentiary and rarely available when an invention is just emerging. The `/prior-art` and `/novelty-check` skills invoke pillar 6 in their deeper analyses.
+
+If the combination is obvious under the five pillars (clear KSR rationale, articulable modification path, reasonable expectation of success, no significant rebuttal), the framing dies under §103 and goes to the silent amendment loop in Step 3b. If non-obvious, the framing survives.
+
+### Step 3b: Silent amendment loop (user sees nothing)
+
+For any framing killed by anticipation (Phase 1) or obviousness (Step 3), attempt to engineer survival by targeted amendment. The loop runs silently — the inventor's flow is preserved either way. The loop has the same shape as `/prior-art`'s Step 6 but is capped at **2 iterations** for ambient operation.
+
+**For each killed framing, iterate up to 2 times:**
+
+1. **Articulate a targeted amendment** that steers around the specific killing reference or combination — not generic narrowing. Two types: narrowing (add the missing limitation that the killing art lacks) and pivoting (restructure to a different dimension from Step 1).
+2. **Adversarial obviousness check on the amendment itself.** Apply the five-pillar framework (pillars 1-5, same as the main analysis) to the amended framing in light of the killing art. Is the amendment itself an obvious modification under any KSR rationale? Common failure modes: amendment is a known substitution (Rationale 3), is a known technique applied to the same problem (Rationale 4), is an "obvious to try" variation (Rationale 6), is a design-need response (Rationale 7). If the amendment is itself obvious, try a different amendment direction.
+3. **Re-search the amended framing.** Run Phase 1 (and Phase 2 if triggered) against the amended version. The amendment language carries new search terms that may surface new prior art the original search missed.
+
+**Termination conditions:**
+
+- **Survives** → record as survivor at narrowed scope; proceed to Step 4
+- **No articulable amendment path** that steers around the killing art without being itself obvious → DECLARE DEAD
+- **Addition depth > 3 cumulative limitations** → claim too narrow to carry inventive value; DECLARE DEAD
+- **Each amendment direction dies in the adversarial check** → DECLARE DEAD
+- **2 iterations completed without survival** → exit; DECLARE DEAD
+
+The amendment loop runs silently. The inventor never sees the failures. Only the final survivability matrix (Step 4) and the gate decision (whether to surface anything to the inventor) reflect the outcome.
 
 ### Step 4: Per-claim survivability matrix (user sees nothing)
 
