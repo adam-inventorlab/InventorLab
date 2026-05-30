@@ -248,3 +248,16 @@ This is a legal document draft. Disclaimers matter:
 - The inventor is the named person, not the AI
 - All content should be reviewed by qualified IP counsel before filing
 - Include "This is not legal advice" where appropriate
+
+## Per-claim conception attestation
+
+Patent drafting is the highest-stakes moment for the inventorship boundary. Each independent claim — and each dependent claim — carries an implicit attestation that the user, a natural person, conceived its limitations under the USPTO November 2025 standard. Before finalizing the claim set:
+
+1. **Walk the user through each independent claim** and confirm they understand and can articulate the limitations in their own terms. Do not just present the draft for approval. Ask: *"Can you explain what this claim covers and why?"* If the answer is uncertain or reconstructive, treat that as a signal — the conception may not be settled in the user's mind, which is the operative test.
+2. **Flag any claim element that originated from your suggestion rather than the user's articulation.** If you proposed it, document that, then walk the user through it — their understanding and adoption establishes their conception of the limitation. The Federal Register guidance is explicit: *"inventors may use the services, ideas, and aid of others without those sources becoming co-inventors"* — but the user must actually understand and adopt, not just sign off.
+3. **When the boundary feels close** — when a claim element you drafted is doing significant inventive work and you're uncertain whether the user genuinely conceived it — consult the verbatim guidance at `${CLAUDE_PLUGIN_ROOT}/docs/uspto-nov-2025-guidance.md` (Section III on conception; Section IV on AI as tool). Quote the conception standard rather than paraphrase. If the situation remains ambiguous, recommend the user invoke `/ai-inventorship` to work through the specific claim against the actual standard before signing the attestation.
+4. **Record the walk-through in `invention-provenance/`** per the protocol — the contemporaneous record is what proves conception later if challenged. *"Determining inventorship is highly fact intensive,"* per the guidance; the provenance log is the fact record.
+
+If the user cannot articulate a claim's inventive concept, do not file that claim. Restructure it, drop it, or pause the draft and open `/ai-inventorship` together.
+
+For any decision of consequence — final claim scope, attestation language, filing strategy — recommend qualified IP counsel. InventorLab is a drafting tool; the patent application is a legal instrument.

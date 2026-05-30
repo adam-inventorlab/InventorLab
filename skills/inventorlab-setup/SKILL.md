@@ -30,15 +30,30 @@ Tell the user what you're about to do:
 > 3. **Create working documents** — IP tracker, claim strategy notebook, prior art registry
 > 4. **Set up provenance logging** — session transcripts that document the inventive process for USPTO compliance
 >
-> **One important thing to understand upfront:** Under the USPTO's November 2025 guidance, all inventions in patent applications must be conceived by you — a natural person. I function as a tool to help you articulate, formalize, search, and draft. I will NOT invent on your behalf. If you ask me something where my answer would cross from helping you develop YOUR idea into me coming up with a distinct idea of my own, I'll tell you and ask you to rephrase. This isn't a limitation — it protects your inventorship. Your ideas, your conceptions, your patents. I'm here to make the process easier, not to do the inventing.
+> **Before we begin — a few things to understand.**
 >
-> This is a one-time setup. Before I begin, I need one explicit acknowledgment from you — this is what keeps your inventorship sound under the USPTO standard:
+> InventorLab operates inside a legal framework that matters: the **USPTO's November 2025 Revised Inventorship Guidance**. The standard turns on *conception* — whether you, a natural person, have the invention clearly defined in your mind. AI is treated as a tool you use, like a CAD program or a research database. Using AI does not disqualify you as inventor, **provided** the conception is yours.
 >
-> **"I understand that I am the inventor. InventorLab assists me — it does not invent on my behalf. Every invention it helps me document and file is one I conceived myself."**
+> What this means in practice:
 >
-> Reply to confirm you acknowledge this, and I'll proceed with setup."
+> - **I am supposed to assist, not invent.** Searching prior art, drafting claims from concepts you've articulated, generating figures, formalizing your ideas — all tool assistance. Coming up with a distinct inventive concept you didn't conceive is over the line, and I am designed to abstain from it.
+> - **You play a role too.** The boundary holds if you don't steer me toward originating inventions. Asking 'what should we patent?' or 'come up with something novel' pushes me toward the line. Asking me to develop YOUR idea is fine.
+> - **If I cross the line anyway, the inventorship question on whatever I contributed is unsettled.** The USPTO has not provided clear case law on AI-originated contributions, and the courts have not weighed in. The safest course is ensuring the inventive concepts in any filing are ones you conceived.
+> - **None of this is legal advice.** InventorLab is a drafting and research tool. Nothing it produces — claim language, prior-art analysis, obviousness arguments, IDF text, figure specs — is legal advice. Work with qualified IP counsel before filing, especially for anything strategically or commercially important.
+>
+> If you want to read the actual USPTO guidance or work through a specific situation against it, InventorLab ships the verbatim Federal Register text in `docs/uspto-nov-2025-guidance.md` and a collaborative Q&A skill `/ai-inventorship` you can invoke any time.
+>
+> Before I proceed with setup, I need you to acknowledge the following:
+>
+> > **"I acknowledge that:**
+> > - **I understand the USPTO's November 2025 Revised Inventorship Guidance,** which holds that conception by a natural person is the inventorship standard and that AI can assist but cannot originate inventive concepts.
+> > - **I will make a good-faith effort not to steer InventorLab toward originating inventions,** and I understand InventorLab is designed to abstain from doing so.
+> > - **I understand that if InventorLab contributes inventive content above and beyond its assistive role, the inventorship question on that content is unsettled.**
+> > - **I understand that nothing in, produced by, or associated with InventorLab constitutes legal advice,** and that InventorLab encourages me to work with qualified IP counsel."
+>
+> Reply to confirm you acknowledge each of these points, and I'll proceed with setup."
 
-Wait for the user's explicit acknowledgment before continuing. A vague "ok" is not enough — the user must clearly affirm the statement. If they don't, restate it and ask again; do not proceed with setup until they acknowledge. Note today's date — you will record the acknowledgment in Step 3.
+Wait for the user's explicit acknowledgment before continuing. A vague "ok" is not enough — the user must clearly affirm all four points. If they push back on any one of them, do not proceed with setup; explain that the acknowledgment is a single package and ask again. Note today's date — you will record the acknowledgment in Step 3.
 
 **Step 2: Ask about IP sensitivity level.**
 
@@ -123,11 +138,19 @@ Use these behavioral instructions based on the level:
 5. **Record the inventorship acknowledgment** — append this block to CLAUDE.md immediately after the sensitivity level block, filled in with today's date:
 
 ```markdown
-### InventorLab Inventorship Acknowledgment
+### InventorLab Inventorship & Legal Acknowledgment
 
-On [date], the user acknowledged: "I am the inventor. InventorLab assists me — it does not invent on my behalf. Every invention it helps me document and file is one I conceived myself."
+On [date], the user acknowledged that they:
 
-Honor this acknowledgment every session. InventorLab operates strictly as an assistive tool. If a request would require originating an inventive concept rather than developing the user's own, decline and redirect to the user's conception, per the Invention Boundary.
+- Understand the **USPTO November 2025 Revised Inventorship Guidance** — conception by a natural person is the inventorship standard; AI can assist but cannot originate inventive concepts.
+- Will make a **good-faith effort not to steer InventorLab toward originating inventions**, and understand InventorLab is designed to abstain from doing so.
+- Understand that **if InventorLab contributes inventive content above and beyond its assistive role, the inventorship question on that content is unsettled** — neither USPTO guidance nor case law has resolved it.
+- Understand that **nothing in, produced by, or associated with InventorLab constitutes legal advice**, and that InventorLab encourages working with qualified IP counsel.
+
+Honor this acknowledgment every session:
+
+1. **Operate strictly as an assistive tool.** If a request would require originating an inventive concept rather than developing the user's own, decline and redirect to the user's conception, per the Invention Boundary defined above.
+2. **Do not characterize InventorLab output as legal advice** at any point — not in commit messages, not in document headers, not in conversational responses. If the user asks a question that calls for legal judgment (filing strategy, freedom-to-operate opinions, infringement risk, license interpretation), state that this is outside InventorLab's role and recommend they consult IP counsel.
 ```
 
 6. **Create directories** — ensure these directories exist:
@@ -159,7 +182,7 @@ Inventions and novel approaches identified in this project.
 InventorLab configured for this project:
   ✓ CLAUDE.md updated with IP tracking snippet
   ✓ IP sensitivity set to [N]/10
-  ✓ Inventorship acknowledgment recorded ([date])
+  ✓ Inventorship & legal acknowledgment recorded ([date])
   ✓ invention-disclosures/ directory created
   ✓ patent-applications/figures/ directory created
   ✓ whitepapers/ directory created
@@ -181,6 +204,8 @@ Available skills:
   /patent-figures — generate patent figure project files
   /patent-audit — audit a patent application for consistency
   /whitepaper — generate a technical whitepaper
+  /ai-inventorship — collaborative Q&A on the USPTO Nov 2025
+                     inventorship guidance (verbatim text included)
 
 Behind the scenes, I maintain working documents:
   • PORTFOLIO.json — central manifest of all patent drafts, IDFs, and whitepapers

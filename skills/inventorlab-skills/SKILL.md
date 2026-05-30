@@ -30,6 +30,16 @@ skills run inside your Claude Code session as slash commands.
   Claim Strategy Notebook, Prior Art Registry, Portfolio), and sets
   your sensitivity level (1-10). Run once at the start of a project.
 
+`/ai-inventorship`
+  Collaborative Q&A on AI-assisted inventorship under the USPTO
+  November 2025 Revised Inventorship Guidance. Loads the verbatim
+  guidance text and answers questions grounded in it. Use when you
+  or InventorLab is uncertain whether something has crossed from
+  tool assistance into AI origination, when drafting per-claim
+  conception attestations, or just to understand where the line
+  is drawn. Not legal advice — for material decisions, consult IP
+  counsel.
+
 ## Discovery
 
 Invention Radar (always-on, no invocation)

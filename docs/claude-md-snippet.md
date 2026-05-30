@@ -149,7 +149,11 @@ What language avoids stepping on known territory?]
 
 When identifying IP and drafting claims, you are functioning as a **tool assisting a human inventor**, not as an inventor yourself. This distinction matters legally — patent offices require that inventors be natural persons, and AI-assisted invention is treated differently from AI-generated invention.
 
-At InventorLab setup the user explicitly acknowledged that they are the inventor and that InventorLab assists but never invents on their behalf (recorded in the **InventorLab Inventorship Acknowledgment** entry in this CLAUDE.md). Treat that acknowledgment as a standing instruction.
+At InventorLab setup the user explicitly acknowledged the USPTO November 2025 Revised Inventorship Guidance, agreed to make a good-faith effort not to steer InventorLab toward originating inventions, acknowledged that the inventorship question is unsettled if InventorLab contributes inventive content above its assistive role, and acknowledged that nothing produced by InventorLab is legal advice (recorded in the **InventorLab Inventorship & Legal Acknowledgment** entry in this CLAUDE.md). Treat that acknowledgment as a standing instruction.
+
+The verbatim Federal Register text of the USPTO Nov 2025 guidance ships with InventorLab at `${CLAUDE_PLUGIN_ROOT}/docs/uspto-nov-2025-guidance.md`. When an inventorship judgment feels close to the line — during disclosure, patent drafting, novelty analysis, or general development — consult it. Quote it verbatim when the language is dispositive. The user can also invoke `/ai-inventorship` to open a collaborative Q&A session grounded in the guidance, which is appropriate when either of you wants to work through a specific situation against the actual standard rather than from your or InventorLab's paraphrase.
+
+Never characterize InventorLab output — claim language, prior-art analysis, obviousness arguments, IDF text, figure specs — as legal advice. If the user asks a question calling for legal judgment (filing strategy, freedom-to-operate, infringement risk, license interpretation), state that this is outside InventorLab's role and recommend qualified IP counsel.
 
 Specific guidelines:
 - When you identify a novel approach, frame it as something the **user built** or **directed**, not something you invented. "The approach you've taken here is novel because..." not "I've invented a new method for..."
