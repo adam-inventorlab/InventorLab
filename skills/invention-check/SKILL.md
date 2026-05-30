@@ -1,4 +1,5 @@
 ---
+name: invention-check
 description: Review code for novel approaches that may warrant IP tracking. Supports full codebase audit or recent-changes-only mode. Use when finishing a feature, completing a refactor, or when the user asks about novelty or IP.
 argument-hint: [recent|full|path/to/dir]
 allowed-tools: Read Glob Grep Bash Edit Agent

@@ -4,7 +4,7 @@
 
 You're building software. Some of what you build is novel — a clever workaround, a non-obvious combination of techniques, a pattern you invented because nothing existed. That's intellectual property, and it's walking out the door every time you `git push` without documenting it.
 
-InventorLab is a plugin for [Claude Code](https://claude.com/claude-code) and [Codex](https://github.com/openai/codex) — same skills, same MCP server, same protocols — that watches your code for novel inventions as you build, helps you articulate what makes them non-obvious, and drafts patent applications with figures, all from the terminal.
+InventorLab is a plugin for [Claude Code](https://claude.com/claude-code), [Codex](https://github.com/openai/codex), and [Cursor](https://cursor.com) — same skills, same MCP server, same protocols, shipped from a single source — that watches your code for novel inventions as you build, helps you articulate what makes them non-obvious, and drafts patent applications with figures.
 
 ## Install
 
@@ -22,23 +22,32 @@ codex marketplace add https://github.com/adam-inventorlab/InventorLab
 /plugins
 ```
 
-Then select **inventorlab** in the plugin browser. (Codex's official plugin directory is in development; the Git marketplace command is the canonical install path today.)
+Then select **inventorlab** in the plugin browser.
+
+### Cursor
+
+```
+/add-plugin inventorlab
+```
+
+(Once listed on the Cursor Marketplace.) Until the official marketplace listing is live, install via Git directly: open Cursor's Settings → Plugins → Add Plugin from Git, point at `https://github.com/adam-inventorlab/InventorLab`.
 
 ### After install
 
-Run the setup skill in your project. It writes the IP-tracking instructions to `AGENTS.md` (read natively by Codex, and by Claude Code via a one-line `@AGENTS.md` import in `CLAUDE.md` that the skill creates), sets up the working directories, and enables Invention Radar.
+Run the setup skill in your project. It writes the IP-tracking instructions to `AGENTS.md` (read natively by Cursor and Codex, and by Claude Code via a one-line `@AGENTS.md` import in `CLAUDE.md` that the skill creates), sets up the working directories, and enables Invention Radar.
 
 - **Claude Code:** `/inventorlab-setup`
 - **Codex:** `$inventorlab:inventorlab-setup` — or just describe what you want (e.g. *"set up InventorLab in this project"*); Codex matches skills by description.
+- **Cursor:** `/inventorlab-setup` — or describe what you want; Cursor matches skills by description.
 
 ### Invoking skills (the other commands)
 
-Throughout the documentation, skills are written with the Claude Code slash-command syntax (`/disclosure-session`, `/patent-draft`, `/prior-art`, etc.). Codex users can invoke any of them in either of two ways:
+Throughout the documentation, skills are written with the Claude Code slash-command syntax (`/disclosure-session`, `/patent-draft`, `/prior-art`, etc.).
 
-- **Plugin-namespaced**: `$inventorlab:disclosure-session`, `$inventorlab:patent-draft`, etc.
-- **Natural language**: describe what you want and Codex picks the matching skill via its description.
+- **Claude Code and Cursor:** identical — `/skill-name`
+- **Codex:** `$inventorlab:skill-name` — or just describe what you want; Codex matches by description.
 
-Both work; pick whichever feels right. The skill names themselves are identical across hosts.
+All three hosts also support natural-language invocation: describe what you want and the agent picks the matching skill. The skill names themselves are identical across hosts.
 
 ## Updating
 
@@ -80,6 +89,16 @@ codex marketplace update inventorlab
 ```
 
 Then re-select **inventorlab** in the plugin browser. Codex's auto-update conventions are evolving alongside the official Plugin Directory rollout; check the [release tags](https://github.com/adam-inventorlab/InventorLab/tags) for what's new in each version.
+
+### Cursor
+
+Cursor's plugin system manages updates through the marketplace. To refresh:
+
+```
+/update-plugin inventorlab
+```
+
+Or, if installed via Git directly, pull the latest from the InventorLab repo and reinstall through Settings → Plugins. Check the [release tags](https://github.com/adam-inventorlab/InventorLab/tags) for what's new in each version.
 
 ## What It Does
 

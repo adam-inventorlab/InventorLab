@@ -1,4 +1,5 @@
 ---
+name: invention-radar
 description: Background awareness for novel inventions during development. Automatically activates when Claude is writing, editing, or refactoring code. Monitors for invention triggers and proactively flags novel approaches.
 user-invocable: false
 paths: "**/*.js,**/*.ts,**/*.py,**/*.rs,**/*.go,**/*.java,**/*.jsx,**/*.tsx"

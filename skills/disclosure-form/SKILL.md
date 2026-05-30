@@ -1,4 +1,5 @@
 ---
+name: disclosure-form
 description: Create and populate an Invention Disclosure Form. Use when the user wants to formally document an invention for IP committee review, or says "disclosure form", "IDF", or "document this invention."
 argument-hint: [ip-tracker-entry-number-or-topic]
 allowed-tools: Read Glob Grep Bash Write Edit Agent

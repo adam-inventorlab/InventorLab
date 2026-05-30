@@ -1,4 +1,5 @@
 ---
+name: inventorlab-setup
 description: Configure InventorLab for the current project. Adds the IP tracking snippet to AGENTS.md (read by Codex natively; imported by Claude Code via a minimal CLAUDE.md) and creates the required directories. Run once per project.
 allowed-tools: Read Glob Grep Write Edit Bash
 ---

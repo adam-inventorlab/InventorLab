@@ -1,0 +1,25 @@
+{
+  "name": "inventorlab",
+  "version": "3.0.0",
+  "description": "AI-powered patent drafting toolkit for Cursor — discover inventions, draft patents, generate figures, and run structured prior-art searches as you build. After installing, run /inventorlab-setup (or describe what you want — Cursor matches skills by description) to configure your project.",
+  "author": {
+    "name": "Adam Carlson",
+    "email": "adam@inventorlab.ai",
+    "url": "https://inventorlab.ai"
+  },
+  "homepage": "https://inventorlab.ai",
+  "repository": "https://github.com/adam-inventorlab/InventorLab",
+  "license": "MIT",
+  "keywords": [
+    "patent",
+    "invention",
+    "intellectual-property",
+    "ip",
+    "patent-drafting",
+    "figures"
+  ],
+  "skills": "./skills/",
+  "rules": "./.cursor/rules/",
+  "mcpServers": "./.cursor/mcp.json",
+  "hooks": "./.cursor/hooks.json"
+}

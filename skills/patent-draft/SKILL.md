@@ -1,4 +1,5 @@
 ---
+name: patent-draft
 description: Generate a draft provisional patent application from IP tracker entries, invention disclosure forms, or code. Use when the user wants to draft a patent, create a provisional application, or write claims.
 argument-hint: [idf-file-or-ip-tracker-entries]
 allowed-tools: Read Glob Grep Bash Write Edit Agent

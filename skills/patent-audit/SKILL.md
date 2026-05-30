@@ -1,4 +1,5 @@
 ---
+name: patent-audit
 description: Audit a patent application for reference numeral consistency, claim support, and figure alignment. Use when the user asks to check, verify, or audit a patent application.
 argument-hint: [spec-file]
 allowed-tools: Read Glob Grep

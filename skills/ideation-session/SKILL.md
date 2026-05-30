@@ -1,4 +1,5 @@
 ---
+name: ideation-session
 description: Divergent thinking session to explore novel approaches, architectures, and inventions. Use when the user wants to brainstorm, explore possibilities, or think through a problem space.
 argument-hint: [topic-or-problem]
 allowed-tools: Read Glob Grep Bash WebSearch

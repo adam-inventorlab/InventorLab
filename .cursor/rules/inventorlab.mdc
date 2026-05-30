@@ -1,0 +1,37 @@
+---
+description: InventorLab is active in this project. Apply the always-on IP-tracking conventions, the Invention Radar lens, and surface the working documents on every agent turn. AI-powered patent drafting toolkit; same skills work as Claude Code and Codex.
+alwaysApply: true
+---
+
+# InventorLab — always-on context
+
+InventorLab is configured for this project. On every turn, apply the always-on conventions defined in the project instructions, run the Invention Radar lens against what the user just did or said, and treat the working documents below as authoritative state.
+
+## Project instructions
+
+The canonical project instructions live in `@AGENTS.md`. Treat that file as the always-on behavioral layer — IP-tracking conventions, the Invention Boundary, USPTO compliance rules, the Publication Watchdog, and the suggested-skills mapping all come from there. Re-load on every turn so the instructions stay current as the project evolves.
+
+## Invention Radar
+
+The Invention Radar is the per-turn IP-aware lens. Its full specification — what signals to watch for, when to write to `IDEAS.md` vs. `IP-TRACKER.md`, how the Novelty Gate runs, the intellectual firewall, the invention boundary — is at `@skills/invention-radar/SKILL.md`. Apply it on every turn the user produces inventive activity, the same way Claude Code and Codex apply it from their always-on context.
+
+Background work is always thorough regardless of visibility level: the Novelty Gate runs on every signal, prior-art coverage stays at full depth, IDEAS.md / IP-TRACKER.md / PRIOR-ART.md / CLAIM-STRATEGY-NOTEBOOK.md populate automatically. The user's `InventorLab Visibility Level` (1–5, set in AGENTS.md) controls only how much you surface to them mid-task — Publication Watchdog and Invention Boundary still surface in real time at all levels.
+
+## Working documents
+
+These files in the project root carry IP state across sessions. Read them when they're relevant to the current task; update them per the Radar's discipline.
+
+- `@IP-TRACKER.md` — accumulating tracker of inventions that have survived the Novelty Gate
+- `@IDEAS.md` — Idea Buffer for conversational signals that haven't crystallized yet; use `/invention-synthesis` to find multi-prompt threads
+- `@CLAIM-STRATEGY-NOTEBOOK.md` — per-invention claim strategies, scope explorations, drafting notes
+- `@PRIOR-ART.md` — structured registry of prior-art findings, keyed by tracker entry
+- `@PORTFOLIO.json` — central manifest of every IP document (patent drafts, IDFs, whitepapers)
+- `invention-provenance/` — session transcripts for USPTO conception evidence
+
+## Skill invocation
+
+Skills live at `.cursor/skills/<name>/SKILL.md` and behave identically to their Claude Code / Codex counterparts. User-invokable skills are invoked with `/skill-name` (e.g., `/inventorlab-setup`, `/disclosure-session`, `/patent-draft`) or by description match if the user describes what they want in natural language. The Invention Radar itself is not user-invoked — it's loaded via this always-on rule.
+
+## Cross-vendor compatibility
+
+This plugin ships from a single source for Claude Code, OpenAI Codex, and Cursor. The same `skills/` directory, the same `mcp-prior-art` MCP server, and the same `AGENTS.md` conventions apply across all three hosts. The only platform-specific files are the per-host plugin manifests (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, `.cursor-plugin/plugin.json`), the per-host MCP registrations (`.mcp.json`, `.mcp-codex.json`, `.cursor/mcp.json`), and this Cursor-specific always-on rule (since Cursor lacks a literal "background skill" concept).

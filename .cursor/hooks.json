@@ -1,0 +1,9 @@
+{
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node \"${PLUGIN_ROOT}/.cursor/hooks/firstrun-check.js\""
+      }
+    ]
+  }
+}

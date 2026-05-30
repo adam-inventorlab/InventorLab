@@ -1,4 +1,5 @@
 ---
+name: disclosure-session
 description: Interactive session to articulate and formalize an invention from existing code. Use when the user wants to discuss, refine, or document a novel approach they've built.
 argument-hint: [file-or-topic]
 allowed-tools: Read Glob Grep Bash Edit Write Agent

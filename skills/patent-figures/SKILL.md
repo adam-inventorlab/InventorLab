@@ -1,4 +1,5 @@
 ---
+name: patent-figures
 description: Generate patent figure project files from a patent specification. Use when drafting patent applications, creating or updating patent figures, or when the user asks about patent diagrams.
 argument-hint: [spec-file]
 allowed-tools: Read Glob Grep Write Bash
