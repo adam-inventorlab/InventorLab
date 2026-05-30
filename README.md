@@ -24,9 +24,21 @@ codex marketplace add https://github.com/adam-inventorlab/InventorLab
 
 Then select **inventorlab** in the plugin browser. (Codex's official plugin directory is in development; the Git marketplace command is the canonical install path today.)
 
-### After install (either host)
+### After install
 
-Run `/inventorlab-setup` in your project. It writes the IP-tracking instructions to `AGENTS.md` (read natively by Codex, and by Claude Code via a one-line `@AGENTS.md` import in `CLAUDE.md` that the skill creates), sets up the working directories, and enables Invention Radar.
+Run the setup skill in your project. It writes the IP-tracking instructions to `AGENTS.md` (read natively by Codex, and by Claude Code via a one-line `@AGENTS.md` import in `CLAUDE.md` that the skill creates), sets up the working directories, and enables Invention Radar.
+
+- **Claude Code:** `/inventorlab-setup`
+- **Codex:** `$inventorlab:inventorlab-setup` — or just describe what you want (e.g. *"set up InventorLab in this project"*); Codex matches skills by description.
+
+### Invoking skills (the other commands)
+
+Throughout the documentation, skills are written with the Claude Code slash-command syntax (`/disclosure-session`, `/patent-draft`, `/prior-art`, etc.). Codex users can invoke any of them in either of two ways:
+
+- **Plugin-namespaced**: `$inventorlab:disclosure-session`, `$inventorlab:patent-draft`, etc.
+- **Natural language**: describe what you want and Codex picks the matching skill via its description.
+
+Both work; pick whichever feels right. The skill names themselves are identical across hosts.
 
 ## Updating
 

@@ -83,9 +83,13 @@ ${WHITE}    Templates${RESET}        ${DIM}Patent application & invention disclo
 ${GRAY}                     ${DIM}See templates/ directory${RESET}
 
 ${GRAY}    ─────────────────────────────────────────────────────────────────────${RESET}
-${WHITE}${BOLD}    Get started:${RESET}  ${DIM}Run ${GREEN}/inventorlab-setup${RESET}${DIM} in your project to configure${RESET}
-${DIM}                  AGENTS.md (with a CLAUDE.md import for Claude Code),${RESET}
-${DIM}                  create directories, and enable IP tracking.${RESET}
+${WHITE}${BOLD}    Get started:${RESET}  ${DIM}Run the setup skill in your project. It writes AGENTS.md${RESET}
+${DIM}                  (with a CLAUDE.md import for Claude Code), creates the${RESET}
+${DIM}                  working directories, and enables IP tracking.${RESET}
+${GRAY}                     ${RESET}
+${GRAY}                     ${DIM}Claude Code:${RESET} ${GREEN}/inventorlab-setup${RESET}
+${GRAY}                     ${DIM}Codex:${RESET}       ${GREEN}\$inventorlab:inventorlab-setup${RESET}
+${GRAY}                     ${DIM}              ${RESET}${DIM}(or describe it in natural language)${RESET}
 ${GRAY}    ─────────────────────────────────────────────────────────────────────${RESET}
 `;
 
