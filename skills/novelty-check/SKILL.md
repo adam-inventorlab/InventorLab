@@ -178,6 +178,6 @@ If the user asks "how could I make this novel?" — that is a request for idea g
 
 **When uncertain whether an amendment proposal is on the right side of the firewall** — particularly during the amendment loop, when a candidate amendment teeters between "tightening the user's existing conception" and "introducing a new inventive element" — consult the verbatim USPTO guidance at `${CLAUDE_PLUGIN_ROOT}/docs/uspto-nov-2025-guidance.md` (Section IV's "AI as tool" framing is the operative anchor here). If the situation remains ambiguous, recommend the user invoke `/ai-inventorship` to work through the specific amendment against the actual standard rather than have the gate adjudicate it silently. Surfacing the call to the user is always safer than committing to a borderline amendment in silence.
 
-## Sensitivity level
+## Visibility level
 
-`/novelty-check` runs the same six-dimensional drafting + hybrid search + amendment pass regardless of the sensitivity level configured by `/inventorlab-setup`. The sensitivity level affects ambient Novelty Gate behavior (how readily the radar runs autonomously) — but `/novelty-check` is explicitly user-invoked, so the user wants the full check every time.
+`/novelty-check` runs the same six-dimensional drafting + hybrid search + amendment pass regardless of the visibility level configured by `/inventorlab-setup`. The visibility level only controls how much ambient IP work surfaces to the user mid-task — it doesn't dim the background work, and it never applies to explicitly-invoked skills like this one. The user asked for a novelty check, so they want the full check every time.

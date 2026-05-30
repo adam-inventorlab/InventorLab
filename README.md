@@ -159,7 +159,7 @@ Then re-select **inventorlab** in the plugin browser. Codex's auto-update conven
 - **When to use:** Periodically (e.g., after completing a feature), or when you suspect you've built something novel but aren't sure. Good for catching inventions you didn't notice while building.
 
 **Invention Radar** (always-on, no invocation needed) — Monitors your code as you write it. When you build something that looks even slightly novel, it silently drafts claims from multiple angles, runs a prior art search, and only flags it to you if it survives. You never see the false positives.
-- **When it activates:** Automatically, during normal development. The sensitivity level (1-10, set during setup) controls how aggressively it searches.
+- **When it activates:** Automatically, during normal development. Background work always runs at full intensity; the visibility level (1-5, set during setup) controls how much it surfaces to you mid-task vs. populates the tracker silently.
 
 **`/novelty-check [idea, file, or entry number]`** — Explicit novelty check, with full disclosure
 - `/novelty-check using a typed graph as both retrieval substrate and memory` — check a free-text idea
@@ -233,7 +233,7 @@ Then re-select **inventorlab** in the plugin browser. Codex's auto-update conven
 ### Setup
 
 **`/inventorlab-setup`** — Configure InventorLab for a new project
-- **When to use:** Once, at the start of a project. Sets sensitivity level, output goals, creates working documents (IP Tracker, Claim Strategy Notebook, Prior Art Registry, Portfolio). Explains the invention boundary and USPTO compliance.
+- **When to use:** Once, at the start of a project. Sets visibility level (1-5), output goals, creates working documents (IP Tracker, Idea Buffer, Claim Strategy Notebook, Prior Art Registry, Portfolio). Explains the invention boundary and USPTO compliance.
 
 ### Reference
 

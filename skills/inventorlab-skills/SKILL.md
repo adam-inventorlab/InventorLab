@@ -29,7 +29,7 @@ skills run inside your Claude Code session as slash commands.
   conventions to AGENTS.md (and a one-line CLAUDE.md that imports it
   for Claude Code), creates working documents (IP Tracker, Claim
   Strategy Notebook, Prior Art Registry, Portfolio), and sets your
-  sensitivity level (1-10). Run once at the start of a project.
+  visibility level (1-5). Run once at the start of a project.
 
 `/ai-inventorship`
   Collaborative Q&A on AI-assisted inventorship under the USPTO

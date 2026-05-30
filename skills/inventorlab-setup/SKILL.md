@@ -55,25 +55,29 @@ Tell the user what you're about to do:
 
 Wait for the user's explicit acknowledgment before continuing. A vague "ok" is not enough — the user must clearly affirm all four points. If they push back on any one of them, do not proceed with setup; explain that the acknowledgment is a single package and ask again. Note today's date — you will record the acknowledgment in Step 3.
 
-**Step 2: Ask about IP sensitivity level.**
+**Step 2: Ask about IP visibility level.**
 
 After confirmation, ask:
 
-> "One more thing — how much IP commentary do you want from me as you work? Pick a level from 1 to 10:
+> "One more thing — how in-the-loop do you want to be on the IP work I'm doing? Background work always runs at full intensity (Novelty Gate on every signal, full prior-art coverage, IP Tracker populated automatically) regardless of what you pick. This setting just controls how much I interrupt you about it. Pick 1 through 5:
 >
-> **1-3 (Low):** I only speak up when something is clearly novel. You'll rarely hear about IP unless it's a strong signal. Best if you want to focus on building and check IP periodically with `/invention-check`.
+> **1 — Silent.** I work in the background and never bring up IP unless you ask. IP-TRACKER.md, IDEAS.md, and PRIOR-ART.md fill in automatically; you check them on your own schedule. Best if you want maximum flow.
 >
-> **4-6 (Medium):** I flag things that look promising and occasionally ask 'have you thought about this?' Good balance between building and IP awareness. **(5 is the default)**
+> **2 — Session digest.** Silent during work. At the end of a session, one brief summary: *"3 entries added since we started; one worth looking at."* Quick and skippable.
 >
-> **7-10 (High):** I actively comment on the novelty of most things you build — including pointing out when something is NOT novel and why. I'll suggest angles, ask probing questions, and think out loud about patentability. Best if you want a constant IP-aware collaborator.
+> **3 — Notify on novel.** Brief interruption when something passes the Novelty Gate. *"Quick — this looks novel. Added to tracker."* No further nudging. **Default.**
+>
+> **4 — Notify and propose.** Same as 3, plus a follow-up: *"Want me to open a disclosure session?"* / *"Should I run prior-art on this now?"* You drive from there.
+>
+> **5 — Active collaborator.** Real-time commentary on the novelty dimension as you code. Probing questions during dev. Proactively suggests `/disclosure-session`, `/ideation-session`, `/prior-art`, `/invention-synthesis`. IP is in the active conversation. Best if IP is a primary focus.
 >
 > What level works for you?"
 
-Wait for the user's answer. If they don't pick a number, default to 5.
+Wait for the user's answer. If they don't pick a number, default to 3.
 
 **Step 2b: Ask about output goals.**
 
-After sensitivity level is set, ask:
+After visibility level is set, ask:
 
 > "Last question — what kind of IP output matters most to you? InventorLab can produce several types of documents, and knowing your goals helps me tailor everything:
 >
@@ -94,7 +98,7 @@ Record the user's preference. This shapes how you use the Invention Radar:
 - **Defensive publication** → emphasize getting things documented and published quickly
 - **Combination** → apply all lenses
 
-Add the user's preference to the AGENTS.md snippet after the sensitivity level:
+Add the user's preference to the AGENTS.md snippet after the visibility level:
 
 ```markdown
 ### InventorLab Output Goals: [user's stated goals]
@@ -107,17 +111,19 @@ Add the user's preference to the AGENTS.md snippet after the sensitivity level:
 
 1. **Check for AGENTS.md** — look for it in the project root. If it doesn't exist, create it. If a `CLAUDE.md` exists but no `AGENTS.md`, treat the existing `CLAUDE.md` as legacy and move its content into a new `AGENTS.md` (preserving it), then replace `CLAUDE.md` with the single-line import described in step 1c.
 
-1b. **Check if snippet is already present** — search for "IP Tracker" or "IP-TRACKER.md" in AGENTS.md (and CLAUDE.md if it exists). If found, tell the user it's already configured and ask if they want to update their sensitivity level.
+1b. **Check if snippet is already present** — search for "IP Tracker" or "IP-TRACKER.md" in AGENTS.md (and CLAUDE.md if it exists). If found, tell the user it's already configured and ask if they want to update their visibility level.
 
 1c. **Ensure Claude Code compatibility** — verify a `CLAUDE.md` exists at the project root containing at minimum the line `@AGENTS.md` (which tells Claude Code to import AGENTS.md). If `CLAUDE.md` doesn't exist, create it with exactly that line. If it exists but does not already import AGENTS.md, prepend `@AGENTS.md` on its own line at the top. This is the bridge so Claude Code picks up the same instructions Codex reads natively.
 
 2. **Add the snippet** — append the InventorLab snippet to the end of AGENTS.md. The snippet is available at:
 !`cat "${CLAUDE_PLUGIN_ROOT}/docs/agents-md-snippet.md"`
 
-3. **Add the sensitivity level** — append this block to AGENTS.md immediately after the snippet, customized with the user's chosen level:
+3. **Add the visibility level** — append this block to AGENTS.md immediately after the snippet, customized with the user's chosen level:
 
 ```markdown
-### InventorLab Sensitivity Level: [N]/10
+### InventorLab Visibility Level: [N]/5
+
+Background IP work runs at full intensity regardless of this level — Invention Radar always watches for novelty signals, the Novelty Gate always runs on candidates, prior-art coverage stays thorough, and IDEAS.md / IP-TRACKER.md / PRIOR-ART.md / CLAIM-STRATEGY-NOTEBOOK.md populate automatically. This level only controls how much you surface that work to the user during the session.
 
 [Insert the appropriate behavioral instruction from the table below]
 ```
@@ -126,18 +132,13 @@ Use these behavioral instructions based on the level:
 
 | Level | Instruction to add to AGENTS.md |
 |-------|--------------------------------|
-| 1 | `Only run the Novelty Gate on strong signals — clear departures from known approaches. Do not run prior art searches during routine development. Save IP observations for /invention-check runs.` |
-| 2 | `Run the Novelty Gate on strong signals only — invention around failure, a non-obvious combination that surprises you. Keep IP commentary rare and high-conviction. Prior art searches only for things you're fairly confident about.` |
-| 3 | `Run the Novelty Gate on strong signals and notable moderate signals. At major stopping points, review what was built and run the gate on anything that stood out.` |
-| 4 | `Run the Novelty Gate on moderate-to-strong signals. At stopping points, review what was built and search anything that might be worth tracking. Prior art searches are becoming routine.` |
-| 5 | `Run the Novelty Gate on all moderate-to-strong signals. Occasionally ask the user if an approach feels novel. At stopping points, review and search. This is the balanced default.` |
-| 6 | `Run the Novelty Gate on anything that seems even slightly unusual. Prior art searches are frequent — the gate filters, so cast a wide net. Comment on why something is or isn't novel when relevant.` |
-| 7 | `Run the Novelty Gate on nearly everything non-trivial. The prior art search IS the filter — your internal sense of novelty is just the trigger. Comment frequently on the novelty dimension. When something is NOT novel, say so and explain why.` |
-| 8 | `Run the Novelty Gate aggressively — any design choice that isn't boilerplate gets a quick search. Treat IP awareness as a primary lens alongside the coding task. The prior art search cost is trivial; missing an invention is not.` |
-| 9 | `Run the Novelty Gate on every significant piece of work. Draft claims and search on anything that's even mildly interesting. Comment on what's novel, what's not, and why. Proactively suggest /disclosure-session and /ideation-session.` |
-| 10 | `Maximum IP awareness. Run the Novelty Gate on EVERYTHING — every design decision, architecture choice, and implementation approach gets draft claims and a prior art search. The bar for triggering a search is effectively zero — if it's code, search it. Comment on everything with reasoning. The user wants a constant IP-aware collaborator.` |
+| 1 | `Silent mode. Do not proactively mention IP work, novel-finding observations, or surface tracker updates during the session. Continue running the Novelty Gate, populating IDEAS.md and IP-TRACKER.md, and updating PRIOR-ART.md and CLAIM-STRATEGY-NOTEBOOK.md in the background. The user will inspect these files on their own schedule. Only break silence if (a) the user explicitly asks about IP, (b) a publication action is imminent that would compromise IP rights (Publication Watchdog), or (c) the Invention Boundary is about to be crossed and you need to surface it.` |
+| 2 | `End-of-session digest mode. Silent during work. When a session is winding down, surface one brief summary covering what was added to IP-TRACKER.md and IDEAS.md since the start of the session, plus a one-line note on anything that looks particularly worth a deeper look. Do not interrupt mid-task. Publication Watchdog and Invention Boundary still surface in real time as exceptions.` |
+| 3 | `Notify-on-novel mode (default). When something passes the Novelty Gate, briefly interrupt to surface it: a one-or-two-sentence note that the candidate was added to the tracker. Do not press for further action. Continue silently otherwise. Publication Watchdog and Invention Boundary still surface in real time.` |
+| 4 | `Notify-and-propose mode. Same as level 3 (brief surface when something passes the Gate), plus a follow-up offer: "want me to open /disclosure-session on this?" or "should I run /prior-art now?" — appropriate to the situation. Let the user drive whether to accept. Continue silently otherwise.` |
+| 5 | `Active collaborator mode. IP is part of the active conversation. Comment in real time on the novelty dimension as the user codes. Ask probing questions about design choices that look inventive. Proactively suggest /disclosure-session, /ideation-session, /prior-art, /invention-synthesis when the moment fits. Treat IP awareness as a primary lens alongside the coding task. Be a colleague who notices and surfaces, not a silent observer.` |
 
-5. **Record the inventorship acknowledgment** — append this block to AGENTS.md immediately after the sensitivity level block, filled in with today's date:
+5. **Record the inventorship acknowledgment** — append this block to AGENTS.md immediately after the visibility level block, filled in with today's date:
 
 ```markdown
 ### InventorLab Inventorship & Legal Acknowledgment
@@ -197,7 +198,7 @@ Multi-prompt inventions are the gap the artifact-first discovery loop leaves ope
 InventorLab configured for this project:
   ✓ AGENTS.md created/updated with IP tracking snippet
   ✓ CLAUDE.md created/updated with @AGENTS.md import (Claude Code bridge)
-  ✓ IP sensitivity set to [N]/10
+  ✓ IP visibility level set to [N]/5
   ✓ Inventorship & legal acknowledgment recorded ([date])
   ✓ invention-disclosures/ directory created
   ✓ patent-applications/figures/ directory created
@@ -242,6 +243,8 @@ teachings from prior art into your inventions. Your ideas stay yours.
 You can peek at any of these anytime.
 ```
 
-## Changing the Sensitivity Level Later
+## Changing the Visibility Level Later
 
-If the user asks to change their IP sensitivity level at any time, find the `### InventorLab Sensitivity Level` section in AGENTS.md (or in CLAUDE.md if a legacy installation predates the AGENTS.md migration) and update the number and the behavioral instruction. No need to re-run setup.
+If the user asks to change their IP visibility level at any time, find the `### InventorLab Visibility Level` section in AGENTS.md (or in CLAUDE.md if a legacy installation predates the AGENTS.md migration) and update the number and the behavioral instruction. No need to re-run setup.
+
+If a project's AGENTS.md still has the legacy `### InventorLab Sensitivity Level` (1-10 scale) from before the v2.11.0 reframing, treat it as functionally equivalent — replace the heading and the body with the new 1-5 framing, mapping the old level conservatively (old 1-2 → new 1, old 3-4 → new 2, old 5 → new 3, old 6-8 → new 4, old 9-10 → new 5) unless the user requests otherwise.
