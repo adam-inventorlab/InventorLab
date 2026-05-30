@@ -84,7 +84,8 @@ ${GRAY}                     ${DIM}See templates/ directory${RESET}
 
 ${GRAY}    ─────────────────────────────────────────────────────────────────────${RESET}
 ${WHITE}${BOLD}    Get started:${RESET}  ${DIM}Run ${GREEN}/inventorlab-setup${RESET}${DIM} in your project to configure${RESET}
-${DIM}                  CLAUDE.md, create directories, and enable IP tracking.${RESET}
+${DIM}                  AGENTS.md (with a CLAUDE.md import for Claude Code),${RESET}
+${DIM}                  create directories, and enable IP tracking.${RESET}
 ${GRAY}    ─────────────────────────────────────────────────────────────────────${RESET}
 `;
 

@@ -1,6 +1,6 @@
 # InventorLab — On-Demand Protocols
 
-Detailed conventions, templates, and workflows for InventorLab IP work. CLAUDE.md carries the always-on behavioral layer (triggers, novelty awareness, publication-awareness pause, USPTO compliance rules). This file contains material consulted on-demand during specific IP tasks.
+Detailed conventions, templates, and workflows for InventorLab IP work. The project's `AGENTS.md` carries the always-on behavioral layer (triggers, novelty awareness, publication-awareness pause, USPTO compliance rules) and is imported by Claude Code via a one-line `CLAUDE.md`. This file contains material consulted on-demand during specific IP tasks.
 
 **Read this file when:**
 - Maintaining the Claim Strategy Notebook
@@ -13,7 +13,7 @@ Detailed conventions, templates, and workflows for InventorLab IP work. CLAUDE.m
 
 ## Full Skill-Suggestion Mapping
 
-CLAUDE.md keeps a condensed list of the most common matches. The full mapping:
+The project's `AGENTS.md` keeps a condensed list of the most common matches. The full mapping:
 
 - **User describes an interesting idea or approach** → *"That's an interesting direction. If you want to explore it further, try `/ideation-session [topic]` — we can brainstorm variations and angles."*
 - **You flag something as potentially novel** → *"I added this to IP-TRACKER.md. When you're ready to articulate it more formally, `/disclosure-session [file-or-topic]` will walk through what makes it non-obvious."*

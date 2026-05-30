@@ -4,22 +4,37 @@
 
 You're building software. Some of what you build is novel — a clever workaround, a non-obvious combination of techniques, a pattern you invented because nothing existed. That's intellectual property, and it's walking out the door every time you `git push` without documenting it.
 
-InventorLab is a [Claude Code](https://claude.com/claude-code) plugin that watches your code for novel inventions as you build, helps you articulate what makes them non-obvious, and drafts patent applications with figures — all from the terminal.
+InventorLab is a plugin for [Claude Code](https://claude.com/claude-code) and [Codex](https://github.com/openai/codex) — same skills, same MCP server, same protocols — that watches your code for novel inventions as you build, helps you articulate what makes them non-obvious, and drafts patent applications with figures, all from the terminal.
 
 ## Install
 
-InventorLab is a [Claude Code](https://claude.com/claude-code) plugin. Install it through Claude Code's plugin system:
+### Claude Code
 
 ```
 /plugin marketplace add adam-inventorlab/InventorLab
 /plugin install inventorlab@inventorlab
 ```
 
-Then run `/inventorlab-setup` in your project to configure CLAUDE.md and enable IP tracking.
+### Codex
+
+```
+codex marketplace add https://github.com/adam-inventorlab/InventorLab
+/plugins
+```
+
+Then select **inventorlab** in the plugin browser. (Codex's official plugin directory is in development; the Git marketplace command is the canonical install path today.)
+
+### After install (either host)
+
+Run `/inventorlab-setup` in your project. It writes the IP-tracking instructions to `AGENTS.md` (read natively by Codex, and by Claude Code via a one-line `@AGENTS.md` import in `CLAUDE.md` that the skill creates), sets up the working directories, and enables Invention Radar.
 
 ## Updating
 
-InventorLab uses Claude Code's built-in plugin update mechanism — there is no separate "InventorLab updater." Three ways to receive new versions:
+InventorLab uses each host's built-in plugin update mechanism — there is no separate "InventorLab updater."
+
+### Claude Code
+
+Three ways to receive new versions:
 
 **Manual update.** Refresh the marketplace catalog and apply any available update:
 
@@ -42,6 +57,17 @@ After that, each new Claude Code session checks for updates. When one is applied
 **For teams** — administrators can set `"autoUpdate": true` on the InventorLab entry in `extraKnownMarketplaces` (managed `settings.json`) to force auto-update for everyone without per-user opt-in.
 
 **Recommendation.** Auto-update is convenient and keeps you on the latest Novelty Gate, prior-art tooling, and skill prompts. The trade-off is that every push to InventorLab's `main` branch reaches your session at the next startup. If you prefer to control when changes land — for example because you depend on stable Novelty Gate behavior in a regulated workflow — leave auto-update off and update manually after reviewing the [release tags](https://github.com/adam-inventorlab/InventorLab/tags).
+
+### Codex
+
+Codex's plugin system uses Git-backed marketplaces. To refresh InventorLab to the latest version, re-fetch the marketplace and reinstall:
+
+```
+codex marketplace update inventorlab
+/plugins
+```
+
+Then re-select **inventorlab** in the plugin browser. Codex's auto-update conventions are evolving alongside the official Plugin Directory rollout; check the [release tags](https://github.com/adam-inventorlab/InventorLab/tags) for what's new in each version.
 
 ## What It Does
 

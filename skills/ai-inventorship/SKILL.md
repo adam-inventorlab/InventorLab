@@ -76,7 +76,7 @@ The honest framing: *"The guidance doesn't resolve this directly. Here's what we
 
 **Step 5: Distinguish the operative standard from InventorLab's calibration.**
 
-The USPTO guidance sets the standard. InventorLab's own protocols (`protocols.md`, the disclosure-session skill, the patent-draft skill, the Invention Boundary instructions in CLAUDE.md) operationalize that standard for AI-assisted software development. When the user asks a question, be clear about which layer you're answering from:
+The USPTO guidance sets the standard. InventorLab's own protocols (`protocols.md`, the disclosure-session skill, the patent-draft skill, the Invention Boundary instructions in the project's `AGENTS.md`) operationalize that standard for AI-assisted software development. When the user asks a question, be clear about which layer you're answering from:
 
 - *"The guidance says X."* (operative standard)
 - *"InventorLab interprets that as Y in the coding context."* (calibration layer)

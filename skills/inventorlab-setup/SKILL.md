@@ -1,11 +1,11 @@
 ---
-description: Configure InventorLab for the current project. Adds the IP tracking snippet to CLAUDE.md and creates the required directories. Run once per project.
+description: Configure InventorLab for the current project. Adds the IP tracking snippet to AGENTS.md (read by Codex natively; imported by Claude Code via a minimal CLAUDE.md) and creates the required directories. Run once per project.
 allowed-tools: Read Glob Grep Write Edit Bash
 ---
 
 # InventorLab Setup
 
-Configure the current project for InventorLab. This adds passive IP tracking to CLAUDE.md so the Invention Radar and other skills work automatically.
+Configure the current project for InventorLab. This adds passive IP tracking to the project's instruction file (`AGENTS.md` — read natively by Codex and imported by Claude Code via a one-line `CLAUDE.md`) so the Invention Radar and other skills work automatically.
 
 ## Process
 
@@ -25,7 +25,7 @@ Tell the user what you're about to do:
 
 > "I'm going to configure InventorLab for this project. Here's what I'll do:
 >
-> 1. **Add IP tracking instructions to CLAUDE.md** — this tells me to watch for novel approaches as you code and proactively flag potential inventions
+> 1. **Add IP tracking instructions to your project's instruction file** — this tells me to watch for novel approaches as you code and proactively flag potential inventions. The content is written to `AGENTS.md` (the cross-vendor convention Codex reads natively). For Claude Code users, a minimal `CLAUDE.md` is also created containing `@AGENTS.md` so the same instructions are picked up.
 > 2. **Create directories** — `invention-disclosures/`, `patent-applications/figures/`, `whitepapers/`, `invention-provenance/`
 > 3. **Create working documents** — IP tracker, claim strategy notebook, prior art registry
 > 4. **Set up provenance logging** — session transcripts that document the inventive process for USPTO compliance
@@ -94,7 +94,7 @@ Record the user's preference. This shapes how you use the Invention Radar:
 - **Defensive publication** → emphasize getting things documented and published quickly
 - **Combination** → apply all lenses
 
-Add the user's preference to the CLAUDE.md snippet after the sensitivity level:
+Add the user's preference to the AGENTS.md snippet after the sensitivity level:
 
 ```markdown
 ### InventorLab Output Goals: [user's stated goals]
@@ -105,14 +105,16 @@ Add the user's preference to the CLAUDE.md snippet after the sensitivity level:
 
 **Step 3: Configure the project.**
 
-1. **Check for CLAUDE.md** — look for it in the project root. If it doesn't exist, create it.
+1. **Check for AGENTS.md** — look for it in the project root. If it doesn't exist, create it. If a `CLAUDE.md` exists but no `AGENTS.md`, treat the existing `CLAUDE.md` as legacy and move its content into a new `AGENTS.md` (preserving it), then replace `CLAUDE.md` with the single-line import described in step 1c.
 
-2. **Check if snippet is already present** — search for "IP Tracker" or "IP-TRACKER.md" in CLAUDE.md. If found, tell the user it's already configured and ask if they want to update their sensitivity level.
+1b. **Check if snippet is already present** — search for "IP Tracker" or "IP-TRACKER.md" in AGENTS.md (and CLAUDE.md if it exists). If found, tell the user it's already configured and ask if they want to update their sensitivity level.
 
-3. **Add the snippet** — append the InventorLab CLAUDE.md snippet to the end of CLAUDE.md. The snippet is available at:
-!`cat "${CLAUDE_PLUGIN_ROOT}/docs/claude-md-snippet.md"`
+1c. **Ensure Claude Code compatibility** — verify a `CLAUDE.md` exists at the project root containing at minimum the line `@AGENTS.md` (which tells Claude Code to import AGENTS.md). If `CLAUDE.md` doesn't exist, create it with exactly that line. If it exists but does not already import AGENTS.md, prepend `@AGENTS.md` on its own line at the top. This is the bridge so Claude Code picks up the same instructions Codex reads natively.
 
-4. **Add the sensitivity level** — append this block to CLAUDE.md immediately after the snippet, customized with the user's chosen level:
+2. **Add the snippet** — append the InventorLab snippet to the end of AGENTS.md. The snippet is available at:
+!`cat "${CLAUDE_PLUGIN_ROOT}/docs/agents-md-snippet.md"`
+
+3. **Add the sensitivity level** — append this block to AGENTS.md immediately after the snippet, customized with the user's chosen level:
 
 ```markdown
 ### InventorLab Sensitivity Level: [N]/10
@@ -122,7 +124,7 @@ Add the user's preference to the CLAUDE.md snippet after the sensitivity level:
 
 Use these behavioral instructions based on the level:
 
-| Level | Instruction to add to CLAUDE.md |
+| Level | Instruction to add to AGENTS.md |
 |-------|--------------------------------|
 | 1 | `Only run the Novelty Gate on strong signals — clear departures from known approaches. Do not run prior art searches during routine development. Save IP observations for /invention-check runs.` |
 | 2 | `Run the Novelty Gate on strong signals only — invention around failure, a non-obvious combination that surprises you. Keep IP commentary rare and high-conviction. Prior art searches only for things you're fairly confident about.` |
@@ -135,7 +137,7 @@ Use these behavioral instructions based on the level:
 | 9 | `Run the Novelty Gate on every significant piece of work. Draft claims and search on anything that's even mildly interesting. Comment on what's novel, what's not, and why. Proactively suggest /disclosure-session and /ideation-session.` |
 | 10 | `Maximum IP awareness. Run the Novelty Gate on EVERYTHING — every design decision, architecture choice, and implementation approach gets draft claims and a prior art search. The bar for triggering a search is effectively zero — if it's code, search it. Comment on everything with reasoning. The user wants a constant IP-aware collaborator.` |
 
-5. **Record the inventorship acknowledgment** — append this block to CLAUDE.md immediately after the sensitivity level block, filled in with today's date:
+5. **Record the inventorship acknowledgment** — append this block to AGENTS.md immediately after the sensitivity level block, filled in with today's date:
 
 ```markdown
 ### InventorLab Inventorship & Legal Acknowledgment
@@ -180,7 +182,8 @@ Inventions and novel approaches identified in this project.
 11. **Report** — tell the user what was configured:
 ```
 InventorLab configured for this project:
-  ✓ CLAUDE.md updated with IP tracking snippet
+  ✓ AGENTS.md created/updated with IP tracking snippet
+  ✓ CLAUDE.md created/updated with @AGENTS.md import (Claude Code bridge)
   ✓ IP sensitivity set to [N]/10
   ✓ Inventorship & legal acknowledgment recorded ([date])
   ✓ invention-disclosures/ directory created
@@ -225,4 +228,4 @@ You can peek at any of these anytime.
 
 ## Changing the Sensitivity Level Later
 
-If the user asks to change their IP sensitivity level at any time, find the `### InventorLab Sensitivity Level` section in CLAUDE.md and update the number and the behavioral instruction. No need to re-run setup.
+If the user asks to change their IP sensitivity level at any time, find the `### InventorLab Sensitivity Level` section in AGENTS.md (or in CLAUDE.md if a legacy installation predates the AGENTS.md migration) and update the number and the behavioral instruction. No need to re-run setup.

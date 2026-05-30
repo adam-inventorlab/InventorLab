@@ -93,7 +93,7 @@ Before generating any figures, review past mistakes and their fixes:
 ## Figure Conventions
 
 Reference the conventions file for complete details:
-!`cat "${CLAUDE_PLUGIN_ROOT}/docs/claude-md-snippet.md"`
+!`cat "${CLAUDE_PLUGIN_ROOT}/docs/agents-md-snippet.md"`
 
 ## Quick Reference
 
