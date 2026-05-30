@@ -1,6 +1,6 @@
 {
   "name": "@inventorlab/claude-plugin",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "AI-powered patent drafting toolkit for Claude Code. Generate patent figures, audit specifications, discover inventions, and run structured prior-art searches via a bundled MCP server.",
   "keywords": [
     "claude-code-plugin",

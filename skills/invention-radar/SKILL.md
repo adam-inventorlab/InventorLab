@@ -130,15 +130,27 @@ For any framing killed by anticipation (Phase 1) or obviousness (Step 3), attemp
 2. **Adversarial obviousness check on the amendment itself.** Apply the five-pillar framework (pillars 1-5, same as the main analysis) to the amended framing in light of the killing art. Is the amendment itself an obvious modification under any KSR rationale? Common failure modes: amendment is a known substitution (Rationale 3), is a known technique applied to the same problem (Rationale 4), is an "obvious to try" variation (Rationale 6), is a design-need response (Rationale 7). If the amendment is itself obvious, try a different amendment direction.
 3. **Re-search the amended framing.** Run Phase 1 (and Phase 2 if triggered) against the amended version. The amendment language carries new search terms that may surface new prior art the original search missed.
 
-**Termination conditions:**
+**Termination conditions for the narrowing loop:**
 
-- **Survives** → record as survivor at narrowed scope; proceed to Step 4
+- **Survives** → record as survivor at narrowed scope; proceed to broadening
 - **No articulable amendment path** that steers around the killing art without being itself obvious → DECLARE DEAD
 - **Addition depth > 3 cumulative limitations** → claim too narrow to carry inventive value; DECLARE DEAD
 - **Each amendment direction dies in the adversarial check** → DECLARE DEAD
 - **2 iterations completed without survival** → exit; DECLARE DEAD
 
-The amendment loop runs silently. The inventor never sees the failures. Only the final survivability matrix (Step 4) and the gate decision (whether to surface anything to the inventor) reflect the outcome.
+**For each surviving framing — silently broaden to find the maximum defensible scope.** The narrowing loop pushes the floor up (finds the narrowest defensible version when prior art killed the original). Broadening pushes the ceiling up (finds the broadest defensible version when the framing already survived). For the Gate's flow-preservation purpose, this is critical: the IP-Tracker entry that reaches the inventor should represent the BROADEST defensible claim the framing supports, not the original framing — that way the inventor sees scope they did not even draft.
+
+For each surviving framing (original or narrowed), iterate up to 2 broadenings:
+
+1. **Articulate a broadening candidate** — limitation removal, abstraction lift (specific term → broader category), universal quantifier relaxation, condition removal, or element generalization.
+2. **Inventive-concept check.** Does the broadened claim still capture what makes the invention inventive? If the broadening sheds the inventive concept itself, reject this direction; try another.
+3. **Re-search the broadened framing.** Run Phase 1 against the broadened version (Phase 2 if triggered). The broadening's wider language may surface new prior art the narrower version dodged.
+4. **Triage:**
+   - Survives → new baseline; try another broadening
+   - Fails (anticipated or obvious) → lock the PREVIOUS framing as the maximum; stop
+   - 2 broadenings completed → current framing is the conservative maximum; stop
+
+The broadening loop also runs silently. The inventor sees only the final survivability matrix and the gate decision — they receive the broadest defensible framing without seeing the iteration.
 
 ### Step 4: Per-claim survivability matrix (user sees nothing)
 

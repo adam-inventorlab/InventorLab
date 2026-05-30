@@ -94,7 +94,7 @@ For any framing that FAILS or is MARGINAL, run the amendment loop. `/novelty-che
 2. **Adversarial obviousness check on the amendment itself.** Wear the examiner hat: apply the six-pillar framework to the amendment+art combination. Is the amendment itself obvious under any of the seven KSR rationales? Common failure modes: substitution of known elements (Rationale 3), application of known technique (Rationale 4), "obvious to try" variation (Rationale 6), design-need response (Rationale 7).
 3. **Re-search the amended framing.** Run Phase 1 against the amended version (and Phase 2 if triggered). The amendment language may surface new prior art.
 
-**Termination conditions** (same as `/prior-art`, capped at 2 iterations for `/novelty-check`):
+**Termination conditions for the narrowing loop** (same as `/prior-art`, capped at 2 iterations for `/novelty-check`):
 
 - **Survives** → record as survivor at narrowed scope; stop
 - **No articulable amendment path** that steers around the killing art without being itself obvious → DECLARE DEAD
@@ -102,7 +102,18 @@ For any framing that FAILS or is MARGINAL, run the amendment loop. `/novelty-che
 - **Each candidate amendment dies in the adversarial check** (each is itself obvious) → DECLARE DEAD
 - **2 iterations completed without survival** → exit the loop; report as DEAD with the amendment attempts documented
 
-The amendment failures are themselves diagnostic — they reveal where the inventive concept's center of gravity lies and where it shades into known territory. Even when a framing dies, the documented amendment attempts tell the user something useful about the IP shape.
+**For each surviving framing — try to broaden.** Same lightweight pattern as the narrowing loop, applied in the opposite direction. The goal is to find the broadest defensible version of the survivor before reporting to the user. Capped at 2 broadening iterations for `/novelty-check`.
+
+1. **Articulate a broadening candidate.** One of: limitation removal, abstraction lift (replace specific term with broader category), universal quantifier relaxation, condition removal, or element generalization.
+2. **Inventive-concept check on the broadening.** Does the broadened claim still capture the inventive concept, or does it shed it into territory anyone in the field would recognize as standard? If shed → reject this broadening direction; try another.
+3. **Re-search the broadened framing.** Run Phase 1 against the broadened version (Phase 2 if triggered). The broadening's wider language may surface prior art the narrower version dodged.
+4. **Triage:**
+   - Broadened framing survives → record as new baseline; return to step 1 for another broadening
+   - Broadened framing fails (anticipated or obvious) → lock the PREVIOUS framing as the maximum; stop
+   - Inventive concept shed → try a different broadening direction
+   - 2 broadenings completed → current framing is the conservative maximum; stop
+
+The amendment failures (in either direction) are themselves diagnostic — they reveal where the inventive concept's center of gravity lies and where it shades into known territory. The broadenings that DID survive reveal how much scope the inventive concept can carry. When reporting to the user, present the BROADEST surviving framing as the headline result, not the original — the broadest version is the most useful claim from a prosecution standpoint.
 
 ### Step 6: Report to the user (ALWAYS — including failures)
 

@@ -339,14 +339,69 @@ Exit the loop at any of:
 - **Addition depth > 3 cumulative limitations across all iterations** → claim is too narrow to carry inventive value (any further narrowing dissolves the inventive concept); DECLARE DEAD
 - **Each candidate amendment direction dies in Step 6b** (each is itself obvious) → DECLARE DEAD
 
-#### What the amendment portfolio reveals about the IP
+#### Step 6e — Broadening amendments for surviving framings
 
-Document every amendment attempt, surviving and not. The amendment depth diagnoses the IP shape:
+The narrowing loop pushes the floor up: it finds the narrowest defensible version of a framing that prior art killed. The complementary move pushes the ceiling up: for every framing that survives — either originally or after the narrowing loop — attempt to broaden its scope to find the broadest defensible version. This is what an experienced prosecutor does to draft the strongest independent claim.
 
-- **Survives with no amendment** → strong, broad IP
-- **Survives with one small narrowing** → strong, somewhat narrower IP
-- **Survives with two or three substantive amendments** → real but narrow IP; the moat is thin
-- **Dies at any termination condition** → not patentable as conceived. The failures themselves are diagnostic about where the inventive concept's center of gravity actually lies and where it shades into known territory. A clean "not patentable" answer with documented amendment attempts is often more useful than a marginal "barely defensible at extreme narrowing" answer.
+For each surviving framing, articulate a candidate broadening. Broadenings take several forms:
+
+- **Limitation removal** — strip a specific limitation entirely. *"wherein the data store is a Redis instance"* → *"wherein the data store"*.
+- **Abstraction lift** — replace a specific term with a broader category. *"Redis instance"* → *"in-memory data store"* → *"data store"*. Each step generalizes; the claim covers more territory.
+- **Universal quantifier relaxation** — replace specific conditions with broader scope. *"performed exactly N times"* → *"performed at least once"*.
+- **Condition removal** — drop a condition that constrains when the claim applies.
+- **Element generalization** — replace a specific implementation element with its functional category. *"TCP connection"* → *"network connection"*.
+
+Apply one broadening at a time. Each broadening is a candidate; whether it survives is what the next sub-step determines.
+
+#### Step 6f — Inventive-concept check on the broadening
+
+Before accepting a broadening, evaluate adversarially: does the broadened claim still capture what makes the invention inventive? If the broadening sheds the inventive concept itself — generalizing past the load-bearing inventive element into territory that anyone in the field would recognize as standard — STOP. That broadening is not a defensible expansion of scope; it's a scope inflation that has shed the invention.
+
+This is the broadening-direction analog of the adversarial obviousness check on narrowings. Where narrowing asks *"is the narrowing itself an obvious modification?"*, broadening asks *"does the broadening shed the inventive concept?"* Both reviews protect the integrity of the claim. If the broadening preserves the inventive concept, proceed to re-search. If not, reject this broadening direction and try another.
+
+#### Step 6g — Re-search the broadened framing
+
+The broadened claim captures more — including potentially more prior art. Run Phase 1 (and Phase 2 if triggered) against the broadened version. The broadening's wider language may surface prior art the narrower version dodged because the narrower version was specific enough not to match. This is the asymmetric mirror of the narrowing re-search: narrowing brings new search terms (the added limitation), broadening drops constraints (so previously-excluded references now match).
+
+If the broadened framing survives, it becomes the new baseline. Return to Step 6e and attempt to broaden further. Each iteration pushes the ceiling up.
+
+If the broadened framing fails — either anticipates a reference or is now obvious under the six-pillar framework — the PREVIOUS framing (still surviving) is the maximum defensible breadth. **Lock the previous framing as the broadened survivor** and stop. The point of broadening is not to expand recklessly; it is to find the threshold where prior art catches the claim and stop one step short of it.
+
+#### Step 6h — Termination conditions for the broadening loop
+
+Exit the broadening loop at any of:
+
+- **Broadening fails** (anticipated or obvious) → lock the previous surviving framing as the maximum; stop
+- **Inventive concept shed** in the inventive-concept check → reject this broadening direction; try another
+- **No more broadening candidates** that preserve the inventive concept → current framing is the maximum defensible breadth; stop
+- **Iteration cap of 3 cumulative broadenings reached** → current framing is the conservative maximum; stop. This is the same depth cap pattern as the narrowing loop, applied in the opposite direction.
+
+Document every broadening attempt, surviving and not. The asymmetric portfolio of narrowings and broadenings together brackets the defensible claim scope from above and below.
+
+#### What the combined amendment portfolio reveals about the IP
+
+Document every amendment attempt — narrowing and broadening, surviving and not. The combined portfolio diagnoses the IP shape on both axes:
+
+**From the broadening direction (ceiling):**
+
+- **Broadens through multiple iterations** → surprising scope; the inventive concept is robust and broad
+- **Broadens once before failing** → moderate scope expansion available; one round of generalization survives
+- **Broadens zero times** → inventive scope is exactly what was originally drafted; the framing is fully constrained by its original limitations
+
+**From the narrowing direction (floor):**
+
+- **Survives with no narrowing needed** → original framing is defensible at its stated scope
+- **Survives with one small narrowing** → defensible but somewhat narrower
+- **Survives with two or three substantive narrowings** → real but narrow IP; the moat is thin
+- **Hits a narrowing termination condition** → not patentable as conceived. The failures themselves are diagnostic about where the inventive concept's center of gravity lies and where it shades into known territory.
+
+**Together, narrowing and broadening produce the patent prosecution ladder:**
+
+- **The broadest defensible independent claim** — the ceiling found by the broadening loop
+- **The original framing** if it survives, or the narrowed version if not
+- **The ladder of dependent claims** — the amendments documented in the narrowing loop become natural dependent claims, each carrying one or more of the limitations that were added to escape close prior art
+
+Each rung of the ladder is a separately-evaluated, court-grounded survivor against the prior-art landscape. The ladder is exactly what an attorney would draft for prosecution; the difference is that InventorLab produces it automatically at the Gate stage rather than requiring attorney time to construct.
 
 ### 7. Produce the prior art report
 
