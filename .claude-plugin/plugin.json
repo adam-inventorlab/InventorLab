@@ -1,8 +1,10 @@
 {
   "name": "inventorlab",
-  "version": "2.9.2",
+  "version": "2.9.3",
   "description": "AI-powered patent drafting toolkit for Claude Code — discover inventions, draft patents, generate figures, and run structured prior-art searches as you build. After installing, run /inventorlab-setup to configure your project.",
   "author": {
-    "name": "Adam Carlson"
+    "name": "Adam Carlson",
+    "email": "adam@inventorlab.ai",
+    "url": "https://inventorlab.ai"
   }
 }

@@ -91,6 +91,7 @@ ${GRAY}                     ${DIM}Claude Code:${RESET} ${GREEN}/inventorlab-setu
 ${GRAY}                     ${DIM}Codex:${RESET}       ${GREEN}\$inventorlab:inventorlab-setup${RESET}
 ${GRAY}                     ${DIM}              ${RESET}${DIM}(or describe it in natural language)${RESET}
 ${GRAY}    ─────────────────────────────────────────────────────────────────────${RESET}
+${DIM}    By Adam Carlson  •  ${RESET}${WHITE}inventorlab.ai${RESET}${DIM}  •  adam@inventorlab.ai${RESET}
 `;
 
 console.log(banner);

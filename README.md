@@ -279,6 +279,13 @@ All skills adhere to the USPTO's **November 2025 Revised Inventorship Guidance f
 
 Provenance logs are maintained automatically during disclosure and ideation sessions, documenting who conceived what and what role Claude Code played — providing contemporaneous evidence of inventorship if ever needed.
 
+## Author
+
+InventorLab is created and maintained by **Adam Carlson**.
+
+- Website: [inventorlab.ai](https://inventorlab.ai)
+- Contact: [adam@inventorlab.ai](mailto:adam@inventorlab.ai)
+
 ## License
 
 MIT
