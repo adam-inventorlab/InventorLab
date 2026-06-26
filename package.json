@@ -17,13 +17,13 @@
     "url": "https://inventorlab.ai"
   },
   "license": "MIT",
-  "homepage": "https://github.com/adam-inventorlab/InventorLab#readme",
+  "homepage": "https://github.com/adamccarlson/InventorLab#readme",
   "bugs": {
-    "url": "https://github.com/adam-inventorlab/InventorLab/issues"
+    "url": "https://github.com/adamccarlson/InventorLab/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adam-inventorlab/InventorLab.git"
+    "url": "git+https://github.com/adamccarlson/InventorLab.git"
   },
   "claude": {
     "skills": "skills"

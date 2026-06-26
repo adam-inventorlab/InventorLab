@@ -11,14 +11,14 @@ InventorLab is a plugin for [Claude Code](https://claude.com/claude-code), [Code
 ### Claude Code
 
 ```
-/plugin marketplace add adam-inventorlab/InventorLab
+/plugin marketplace add adamccarlson/InventorLab
 /plugin install inventorlab@inventorlab
 ```
 
 ### Codex
 
 ```
-codex marketplace add https://github.com/adam-inventorlab/InventorLab
+codex marketplace add https://github.com/adamccarlson/InventorLab
 /plugins
 ```
 
@@ -30,7 +30,7 @@ Then select **inventorlab** in the plugin browser.
 /add-plugin inventorlab
 ```
 
-(Once listed on the Cursor Marketplace.) Until the official marketplace listing is live, install via Git directly: open Cursor's Settings → Plugins → Add Plugin from Git, point at `https://github.com/adam-inventorlab/InventorLab`.
+(Once listed on the Cursor Marketplace.) Until the official marketplace listing is live, install via Git directly: open Cursor's Settings → Plugins → Add Plugin from Git, point at `https://github.com/adamccarlson/InventorLab`.
 
 ### After install
 
@@ -77,7 +77,7 @@ After that, each new Claude Code session checks for updates. When one is applied
 
 **For teams** — administrators can set `"autoUpdate": true` on the InventorLab entry in `extraKnownMarketplaces` (managed `settings.json`) to force auto-update for everyone without per-user opt-in.
 
-**Recommendation.** Auto-update is convenient and keeps you on the latest Novelty Gate, prior-art tooling, and skill prompts. The trade-off is that every push to InventorLab's `main` branch reaches your session at the next startup. If you prefer to control when changes land — for example because you depend on stable Novelty Gate behavior in a regulated workflow — leave auto-update off and update manually after reviewing the [release tags](https://github.com/adam-inventorlab/InventorLab/tags).
+**Recommendation.** Auto-update is convenient and keeps you on the latest Novelty Gate, prior-art tooling, and skill prompts. The trade-off is that every push to InventorLab's `main` branch reaches your session at the next startup. If you prefer to control when changes land — for example because you depend on stable Novelty Gate behavior in a regulated workflow — leave auto-update off and update manually after reviewing the [release tags](https://github.com/adamccarlson/InventorLab/tags).
 
 ### Codex
 
@@ -88,7 +88,7 @@ codex marketplace update inventorlab
 /plugins
 ```
 
-Then re-select **inventorlab** in the plugin browser. Codex's auto-update conventions are evolving alongside the official Plugin Directory rollout; check the [release tags](https://github.com/adam-inventorlab/InventorLab/tags) for what's new in each version.
+Then re-select **inventorlab** in the plugin browser. Codex's auto-update conventions are evolving alongside the official Plugin Directory rollout; check the [release tags](https://github.com/adamccarlson/InventorLab/tags) for what's new in each version.
 
 ### Cursor
 
@@ -98,7 +98,7 @@ Cursor's plugin system manages updates through the marketplace. To refresh:
 /update-plugin inventorlab
 ```
 
-Or, if installed via Git directly, pull the latest from the InventorLab repo and reinstall through Settings → Plugins. Check the [release tags](https://github.com/adam-inventorlab/InventorLab/tags) for what's new in each version.
+Or, if installed via Git directly, pull the latest from the InventorLab repo and reinstall through Settings → Plugins. Check the [release tags](https://github.com/adamccarlson/InventorLab/tags) for what's new in each version.
 
 ## What It Does
 
